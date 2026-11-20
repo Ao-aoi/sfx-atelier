@@ -207,7 +207,7 @@ mahjong-sensei の `Sfx.play(name, opts)` とは同じ形なので、移行は `
 
 ### 4.5 1 段目でやらないこと
 
-エディタの画面、MIDI、分析、Claude 連携、`sample` 層の再生、wav の書き出し。
+エディタの画面、MIDI、分析、Claude 連携、wav の書き出し（`sample` 層の再生は 1 段目で作る）。
 
 ---
 
