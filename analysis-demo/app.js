@@ -7,7 +7,8 @@ let audioContext;
 let decodedBuffer;
 let currentFileName = '';
 let analysisReport = null;
-let objectUrl = null;\nlet activeBandSource = null;
+let objectUrl = null;
+let activeBandSource = null;
 
 const fmt = (n, digits = 1) => Number.isFinite(n) ? n.toFixed(digits) : '—';
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
@@ -212,7 +213,9 @@ function renderLayers(r) {
 async function playBand(index,button) {
   if(!decodedBuffer)return;
   if(audioContext.state==='suspended')await audioContext.resume();
-  if(activeBandSource){try{activeBandSource.stop();}catch{}}\n  const source=audioContext.createBufferSource(),filter=audioContext.createBiquadFilter(),gain=audioContext.createGain();\n  activeBandSource=source;
+  if(activeBandSource){try{activeBandSource.stop();}catch{}}
+  const source=audioContext.createBufferSource(),filter=audioContext.createBiquadFilter(),gain=audioContext.createGain();
+  activeBandSource=source;
   const ranges=[['lowpass',250],['bandpass',Math.sqrt(250*4000)],['highpass',4000]];
   filter.type=ranges[index][0];filter.frequency.value=ranges[index][1];filter.Q.value=index===1?.55:.707;
   if(index===1) {filter.frequency.value=1125;filter.Q.value=.3;}
