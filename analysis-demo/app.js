@@ -7,7 +7,7 @@ let audioContext;
 let decodedBuffer;
 let currentFileName = '';
 let analysisReport = null;
-let objectUrl = null;
+let objectUrl = null;\nlet activeBandSource = null;
 
 const fmt = (n, digits = 1) => Number.isFinite(n) ? n.toFixed(digits) : '—';
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
@@ -212,10 +212,10 @@ function renderLayers(r) {
 async function playBand(index,button) {
   if(!decodedBuffer)return;
   if(audioContext.state==='suspended')await audioContext.resume();
-  const source=audioContext.createBufferSource(),filter=audioContext.createBiquadFilter(),gain=audioContext.createGain();
+  if(activeBandSource){try{activeBandSource.stop();}catch{}}\n  const source=audioContext.createBufferSource(),filter=audioContext.createBiquadFilter(),gain=audioContext.createGain();\n  activeBandSource=source;
   const ranges=[['lowpass',250],['bandpass',Math.sqrt(250*4000)],['highpass',4000]];
   filter.type=ranges[index][0];filter.frequency.value=ranges[index][1];filter.Q.value=index===1?.55:.707;
-  if(index===1) {filter.frequency.value=1100;filter.Q.value=.5;}
+  if(index===1) {filter.frequency.value=1125;filter.Q.value=.3;}
   source.buffer=decodedBuffer;source.connect(filter).connect(gain).connect(audioContext.destination);gain.gain.value=.9;
   button.classList.add('active');button.textContent='再生中…';
   source.onended=()=>{button.classList.remove('active');button.textContent='この帯域を聴く';};
