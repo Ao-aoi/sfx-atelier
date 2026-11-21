@@ -4,19 +4,18 @@
 
 ## 起動方法
 
-リポジトリのルートでローカルHTTPサーバーを起動します。
+分析の計算は `packages/analysis`（TypeScript）を使うので、Vite で動かします。リポジトリのルートで次を実行します。
 
 ```bash
-python -m http.server 8000
+npm install
+npm run dev -w @sfx-atelier/analysis-demo
 ```
 
-ブラウザで `http://localhost:8000/analysis-demo/` を開いてください。
+表示された URL を開いてください。
 
 ## Cloudflare Pages
 
-### リポジトリ全体を1つのPagesプロジェクトとして公開する
-
-Cloudflare PagesのGit連携で次のように設定します。
+リポジトリ全体を 1 つの Pages プロジェクトとして公開します。ルートの `npm run build` がこのデモをビルドし、`dist/analysis-demo` に置きます。
 
 | 設定 | 値 |
 | --- | --- |
@@ -26,10 +25,6 @@ Cloudflare PagesのGit連携で次のように設定します。
 | Root directory | 空欄（リポジトリのルート） |
 
 デプロイ後のURLは `https://<プロジェクト名>.pages.dev/analysis-demo/` です。ルートの `index.html` からもデモへ移動できます。
-
-### デモだけを独立したPagesプロジェクトとして公開する
-
-Root directoryを `analysis-demo`、Build commandを `exit 0`、Build output directoryを `.` に設定します。デプロイ後は `https://<プロジェクト名>.pages.dev/` で開けます。
 
 ## 現在できること
 

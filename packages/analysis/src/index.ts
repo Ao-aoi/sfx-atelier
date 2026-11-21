@@ -9,3 +9,7 @@ export { MIN_TONAL_NOTES, midiToName, noteMidi, PITCH_CLASS_NAMES, symbolic } fr
 export type { ChordCandidate, ScaleCandidate, Symbolic } from "./symbolic";
 export { findings, layerText, MAX_FINDINGS, MAX_LINES, report, REPORT_FORMAT, voiceCount } from "./report";
 export type { Finding, ReportInput } from "./report";
+export { binHz, frameTime, peakToAmplitude, stft } from "./stft";
+export type { Stft } from "./stft";
+export { distance, DISTANCE_FLOOR_DB, DISTANCE_SIZES, logSpectralDistance } from "./distance";
+export type { Distance } from "./distance";
