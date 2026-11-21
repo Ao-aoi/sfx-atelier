@@ -18,7 +18,7 @@ packages/
   physics/     物理エンジン（2.5D の剛体・接触の出来事）と部屋の反響の簡易モデル。エディタとツールだけが使う
   fit/         波形 → 層（減衰する正弦波＋帯域雑音）への変換（M4.5）。エディタとツールだけが使う
   (midi/  計画の M6 で足す)
-web/           エディタ（M3 で足す）
+web/           エディタ（Vite、フレームワークなし）。model/ は純粋な編集の操作・履歴・時間軸・読み書き（Node のテスト）、ui/ は画面（ブラウザのテスト）。Pages では /editor/
 analysis-demo/ 音響分析デモ（JavaScript。計算は packages/analysis を使い、Vite でビルドする）
 bank/          ゲームに配るバンク（mahjong.sfxbank.json）
 recordings/    録音の wav。リポジトリには置くが公開しない
@@ -27,7 +27,7 @@ scripts/       Pages 用のビルドと CI の検査
 
 ## 公開（Cloudflare Pages）
 
-- ビルド `npm run build`（compare と analysis-demo を Vite でビルドしてから集める）、出力 `dist`。公開するものは `scripts/build-site.mjs` の `PUBLISH` に書いたものだけ
+- ビルド `npm run build`（web・compare・analysis-demo を Vite でビルドしてから集める）、出力 `dist`。公開するものは `scripts/build-site.mjs` の `PUBLISH` に書いたものだけ
 - `recordings/` と `.wav` は `dist` に入れない。CI の `npm run check:dist` で確かめる。ゲームに配る wav はゲーム側のリポジトリに書き出す
 - 配布は JSON（合成）と wav（`sample` 層）の両方に対応する
 
