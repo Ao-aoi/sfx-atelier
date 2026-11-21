@@ -56,6 +56,8 @@ const CURVES: [string, string][] = [
 
 export class Panels {
   readonly el: HTMLElement;
+  /** 描き直さずに最後に置く欄（分析・変換） */
+  readonly extra: HTMLElement[] = [];
 
   constructor(private app: App) {
     this.el = h("aside", { class: "panels" });
@@ -75,7 +77,7 @@ export class Panels {
     // 開いている折りたたみと、縦のスクロール位置を保つ
     const open = new Map([...this.el.querySelectorAll("details")].map((d) => [d.dataset.k!, d.open]));
     const scroll = this.el.scrollTop;
-    this.el.replaceChildren(this.trackSection(), this.noteSection(), this.instrumentSection(), this.soundSection());
+    this.el.replaceChildren(this.trackSection(), this.noteSection(), this.instrumentSection(), this.soundSection(), ...this.extra);
     for (const d of this.el.querySelectorAll("details")) if (open.has(d.dataset.k!)) d.open = open.get(d.dataset.k!)!;
     this.el.scrollTop = scroll;
   }

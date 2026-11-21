@@ -63,6 +63,20 @@ export class Player {
     else void ctx.resume().then(() => this.once(score, 0));
   }
 
+  /** 録音（AudioBuffer）をそのまま鳴らす（変換の元との聞き比べ用） */
+  previewBuffer(buffer: AudioBuffer) {
+    const ctx = this.unlock();
+    if (!ctx) return;
+    const go = () => {
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      src.connect(ctx.destination);
+      src.start();
+    };
+    if (ctx.state === "running") go();
+    else void ctx.resume().then(go);
+  }
+
   /**
    * 再生する。loopSeconds があればその間隔で繰り返す。getScore は毎回呼ぶ（ループ中の編集を反映する）
    */
