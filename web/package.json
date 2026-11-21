@@ -16,6 +16,7 @@
     "@sfx-atelier/analysis": "*",
     "@sfx-atelier/fit": "*",
     "@sfx-atelier/format": "*",
+    "@sfx-atelier/physics": "*",
     "@sfx-atelier/runtime": "*"
   },
   "devDependencies": {

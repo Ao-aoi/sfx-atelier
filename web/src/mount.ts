@@ -4,6 +4,7 @@ import { parseJson } from "./model/io";
 import { PRESETS } from "./model/presets";
 import { AnalysisPanel } from "./ui/analysis";
 import { Panels } from "./ui/panels";
+import { PhysicsPanel } from "./ui/physics";
 import { Roll } from "./ui/roll";
 import { Toolbar } from "./ui/toolbar";
 import { h } from "./ui/dom";
@@ -14,6 +15,7 @@ export interface Mounted {
   toolbar: Toolbar;
   panels: Panels;
   analysis: AnalysisPanel;
+  physics: PhysicsPanel;
 }
 
 export function mount(root: HTMLElement): Mounted {
@@ -29,7 +31,10 @@ export function mount(root: HTMLElement): Mounted {
   const analysis = new AnalysisPanel(app, (text, error) => toolbar.say(text, error));
   panels.extra.push(analysis.el);
   panels.el.append(analysis.el);
+  const physics = new PhysicsPanel(app, (text, error) => toolbar.say(text, error));
+  panels.extra.push(physics.el);
+  panels.el.append(physics.el);
   root.replaceChildren(h("div", { class: "editor" }, toolbar.el, h("main", { class: "work" }, rollHost, panels.el), toolbar.status));
   roll = new Roll(app, rollHost);
-  return { app, roll, toolbar, panels, analysis };
+  return { app, roll, toolbar, panels, analysis, physics };
 }
