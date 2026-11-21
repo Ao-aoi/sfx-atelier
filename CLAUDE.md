@@ -13,9 +13,11 @@ web ゲーム向けの軽量な効果音・ジングルを作るツール。Web 
 packages/
   format/      sfx-bank / sfx-score の型・検証・正規化・版の移行。エディタとツールだけが使う
   runtime/     再生だけ（npm 名 @sfx-atelier/runtime）。依存なし。format からは型と既定値（defaults.ts）だけ import する
+  compare/     聞き比べ：mahjong-sensei の sfx.ts（基準）と sfx-bank を同じ種で描画して数字で比べる。A/B のページ（Pages の /ab/）
   (analysis/ fit/ midi/ physics/  計画の M4 以降で足す)
 web/           エディタ（M3 で足す）
 analysis-demo/ 音響分析デモ（素の JavaScript。M4 で packages/analysis を使う側に置き換える）
+bank/          ゲームに配るバンク（mahjong.sfxbank.json）
 recordings/    録音の wav。リポジトリには置くが公開しない
 scripts/       Pages 用のビルドと CI の検査
 ```

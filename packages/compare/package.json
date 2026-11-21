@@ -1,0 +1,25 @@
+{
+  "name": "@sfx-atelier/compare",
+  "version": "0.0.0",
+  "private": true,
+  "description": "聞き比べ：mahjong-sensei の sfx.ts（基準）と sfx-bank を同じ種で描画して数字で比べる。A/B のページも持つ",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite --host",
+    "test": "vitest run",
+    "report": "vitest run test/report.browser.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@sfx-atelier/format": "*",
+    "@sfx-atelier/runtime": "*",
+    "@vitest/browser-playwright": "^5.1.1",
+    "playwright": "~1.63.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
+}
