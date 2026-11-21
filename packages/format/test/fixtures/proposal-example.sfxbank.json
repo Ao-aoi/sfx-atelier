@@ -1,0 +1,59 @@
+{
+  "format": "sfx-bank/1",
+  "master": { "compressor": { "threshold": -10, "ratio": 4 } },
+  "reverb": { "room": { "seconds": 0.7, "decay": 3.2, "wet": 0.16 } },
+  "instruments": {
+    "clack": {
+      "layers": [
+        { "noise": "white", "filter": { "type": "bandpass", "freq": 3400, "q": 1.4 }, "gain": 0.55, "env": { "a": 0.001, "d": 0.035 } },
+        { "noise": "white", "filter": { "type": "bandpass", "freq": 7800, "q": 2.5 }, "gain": 0.12, "env": { "a": 0.001, "d": 0.012 } },
+        { "osc": "sine", "freq": 1180, "gain": 0.22, "env": { "a": 0.002, "d": 0.055 } },
+        { "osc": "sine", "freq": 2730, "gain": 0.10, "env": { "a": 0.002, "d": 0.028 } },
+        { "osc": "sine", "freq": 190, "gain": 0.5, "env": { "a": 0.002, "d": 0.09 }, "pitchEnv": { "toHz": 95, "time": "decay" } }
+      ]
+    },
+    "bell": {
+      "layers": [
+        { "osc": "sine", "ratio": 1,    "gain": 1,    "env": { "a": 0.004, "d": 1 } },
+        { "osc": "sine", "ratio": 2.76, "gain": 0.25, "env": { "a": 0.002, "d": 0.4 } },
+        { "osc": "sine", "ratio": 5.4,  "gain": 0.08, "env": { "a": 0.001, "d": 0.15 } }
+      ]
+    }
+  },
+  "sounds": {
+    "discard": {
+      "time": { "unit": "sec" },
+      "tracks": [
+        { "id": "t1", "instrument": "clack", "send": { "room": 1 },
+          "notes": [{ "id": "n1", "t": 0, "vel": 1 }] }
+      ],
+      "variation": { "tune": 68 }
+    },
+    "kan": {
+      "time": { "unit": "sec" },
+      "gain": 1.05,
+      "tracks": [
+        { "id": "t1", "instrument": "clack", "send": { "room": 1 },
+          "notes": [
+            { "id": "n1", "t": 0,     "tune": -144, "vel": 0.75 },
+            { "id": "n2", "t": 0.055, "tune": -88,  "vel": 0.83 },
+            { "id": "n3", "t": 0.11,  "tune": -35,  "vel": 0.91 },
+            { "id": "n4", "t": 0.165, "tune": 17,   "vel": 0.99 }
+          ] }
+      ],
+      "variation": { "tune": 34 }
+    },
+    "win": {
+      "time": { "unit": "sec" },
+      "tracks": [
+        { "id": "t1", "instrument": "bell", "send": { "room": 1.4 },
+          "notes": [
+            { "id": "n1", "t": 0,     "pitch": "C6", "vel": 0.20, "dur": 1.5 },
+            { "id": "n2", "t": 0.085, "pitch": "E6", "vel": 0.18, "dur": 1.5 },
+            { "id": "n3", "t": 0.17,  "pitch": "G6", "vel": 0.16, "dur": 1.5 },
+            { "id": "n4", "t": 0.255, "pitch": "C7", "vel": 0.14, "dur": 1.5 }
+          ] }
+      ]
+    }
+  }
+}
