@@ -8,11 +8,15 @@
   "types": "src/index.ts",
   "scripts": {
     "build": "vite build",
-    "test": "vitest run",
+    "test": "vitest run && vitest run -c vitest.browser.config.ts",
+    "test:node": "vitest run",
+    "test:browser": "vitest run -c vitest.browser.config.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@sfx-atelier/format": "*",
+    "@vitest/browser-playwright": "^5.1.1",
+    "playwright": "~1.63.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.8",
     "vitest": "^5.1.1"

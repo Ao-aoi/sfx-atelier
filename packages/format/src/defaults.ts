@@ -7,6 +7,8 @@ export const LAYER_DEFAULT = { gain: 1, pan: 0 } as const;
 export const FILTER_DEFAULT = { q: 1, gain: 0 } as const;
 export const PITCH_ENV_DEFAULT = { curve: "exp" } as const;
 export const SAMPLE_DEFAULT = { ratio: 1 } as const;
+/** 録音の層のエンベロープの既定：録音をそのまま最後まで鳴らす（離したら 5ms で消す） */
+export const SAMPLE_ENV_DEFAULT = { a: 0, d: 0, s: 1, r: 0.005, curve: "lin" } as const;
 export const JITTER_DEFAULT = { tune: 0, gain: 0, time: 0 } as const;
 export const NOTE_DEFAULT = { tune: 0, vel: 1 } as const;
 export const TRACK_DEFAULT = { gain: 1, pan: 0 } as const;

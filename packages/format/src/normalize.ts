@@ -12,6 +12,7 @@ import {
   PITCH_ENV_DEFAULT,
   REVERB_DEFAULT,
   SAMPLE_DEFAULT,
+  SAMPLE_ENV_DEFAULT,
   SOUND_DEFAULT,
   TRACK_DEFAULT,
 } from "./defaults";
@@ -24,12 +25,14 @@ const mapValues = <T, U>(o: Record<string, T> | undefined, f: (v: T) => U): Reco
 
 // ---- 正規化 ----
 
+const envDefault = (l: Layer) => ("sample" in l ? SAMPLE_ENV_DEFAULT : ENV_DEFAULT);
+
 function normLayer(l: Layer): Layer {
   const out: Obj = {
     ...LAYER_DEFAULT,
     ...("sample" in l ? SAMPLE_DEFAULT : {}),
     ...l,
-    env: { ...ENV_DEFAULT, ...l.env },
+    env: { ...envDefault(l), ...l.env },
     jitter: { ...JITTER_DEFAULT, ...l.jitter },
   };
   if (l.filter) out.filter = { ...FILTER_DEFAULT, ...l.filter };
@@ -116,7 +119,7 @@ function shrinkLayer(l: Layer): Layer {
   const base = drop(l, "sample" in l ? { ...LAYER_DEFAULT, ...SAMPLE_DEFAULT } : LAYER_DEFAULT);
   return clean({
     ...base,
-    env: l.env && orNone(drop(l.env, ENV_DEFAULT)),
+    env: l.env && orNone(drop(l.env, envDefault(l))),
     jitter: l.jitter && orNone(drop(l.jitter, JITTER_DEFAULT)),
     filter: l.filter && drop(l.filter, FILTER_DEFAULT),
     pitchEnv: l.pitchEnv && drop(l.pitchEnv, PITCH_ENV_DEFAULT),

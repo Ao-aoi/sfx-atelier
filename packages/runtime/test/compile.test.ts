@@ -238,3 +238,17 @@ describe("組み立て", () => {
     expect(p.tail).toBe(p.end);
   });
 });
+
+describe("録音の層の長さ", () => {
+  it("dur が無ければ 録音の長さ ÷ 再生速度 で離し、既定の r 5ms で消える", () => {
+    const ins = { x: { layers: [{ sample: "drop", ratio: 2 }] } };
+    const p = compile(one([{ t: 0.1 }]), { instruments: ins, sampleSeconds: { drop: 0.5 } }, noRandom);
+    // 0.1 + 0.5 ÷ 2 = 0.35 秒で離し、0.355 秒で無音
+    expect(p.voices[0]!.gain).toEqual([
+      ["set", 0.1, 1],
+      ["set", 0.1, 1],
+      ["set", 0.35, 1],
+      ["lin", 0.355, 0],
+    ]);
+  });
+});

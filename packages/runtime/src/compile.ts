@@ -7,6 +7,7 @@ import {
   LAYER_DEFAULT,
   NOTE_DEFAULT,
   SAMPLE_DEFAULT,
+  SAMPLE_ENV_DEFAULT,
   SOUND_DEFAULT,
   TRACK_DEFAULT,
 } from "@sfx-atelier/format/defaults";
@@ -35,6 +36,8 @@ export interface CompileOptions {
 export interface Parts {
   instruments?: Record<string, Instrument>;
   reverb?: Record<string, Reverb>;
+  /** 録音の長さ（秒）。dur の無い音符で、録音の層をどこまで鳴らすかに使う */
+  sampleSeconds?: Record<string, number>;
 }
 
 const cents = (c: number) => Math.pow(2, c / 1200);
@@ -58,12 +61,18 @@ function pitchHz(p: Note["pitch"]): number {
  * s = 0（AD 型）は dur を無視し、a で peak へ、d で無音へ。
  * s > 0 は a で peak、d で peak × s、離す時刻（start + dur。dur が無ければ a + d の後）から r で無音へ。
  */
-export function envelope(env: Envelope | undefined, start: number, peak: number, dur: number | undefined) {
-  const a = env?.a ?? ENV_DEFAULT.a;
-  const d = env?.d ?? ENV_DEFAULT.d;
-  const s = env?.s ?? ENV_DEFAULT.s;
-  const r = env?.r ?? ENV_DEFAULT.r;
-  const exp = (env?.curve ?? ENV_DEFAULT.curve) === "exp";
+export function envelope(
+  env: Envelope | undefined,
+  start: number,
+  peak: number,
+  dur: number | undefined,
+  defaults: Required<Envelope> = ENV_DEFAULT,
+) {
+  const a = env?.a ?? defaults.a;
+  const d = env?.d ?? defaults.d;
+  const s = env?.s ?? defaults.s;
+  const r = env?.r ?? defaults.r;
+  const exp = (env?.curve ?? defaults.curve) === "exp";
   const ramp = exp ? "exp" : "lin";
   const floor = exp ? FLOOR : 0;
   const top = Math.max(peak, FLOOR);
@@ -97,6 +106,7 @@ function voiceOf(
   shiftCents: number,
   bus: number,
   random: Random,
+  sampleSeconds: Record<string, number> | undefined,
 ): Voice {
   const j: Jitter = layer.jitter ?? {};
   const c = shiftCents + spread(random, j.tune ?? 0);
@@ -105,8 +115,13 @@ function voiceOf(
   const shift = cents(c);
 
   const peak = (layer.gain ?? LAYER_DEFAULT.gain) * (note.vel ?? NOTE_DEFAULT.vel) * g;
-  const env = envelope(layer.env, start, peak, noteDur);
-  const d = layer.env?.d ?? ENV_DEFAULT.d;
+  const isSample = "sample" in layer;
+  const envDefaults = isSample ? SAMPLE_ENV_DEFAULT : ENV_DEFAULT;
+  // 録音は、dur が無ければ録音の長さ ÷ 再生速度だけ鳴らす
+  const len = isSample ? sampleSeconds?.[layer.sample] : undefined;
+  const dur = noteDur ?? (isSample && len !== undefined ? len / ((layer.ratio ?? SAMPLE_DEFAULT.ratio) * shift) : undefined);
+  const env = envelope(layer.env, start, peak, dur, envDefaults);
+  const d = layer.env?.d ?? envDefaults.d;
 
   /** 周波数の予定（ピッチ変化つき）。from は開始の周波数 */
   const freqAuto = (from: number): Automation => {
@@ -192,7 +207,7 @@ export function compile(sound: Sound, parts: Parts, random: Random, opts: Compil
       const start = Math.max(0, note.t * beat + spread(random, v.time ?? 0));
       const dur = note.dur === undefined ? undefined : note.dur * beat;
       const shiftCents = (note.tune ?? NOTE_DEFAULT.tune) + soundCents;
-      for (const layer of ins.layers) voices.push(voiceOf(layer, note, start, dur, shiftCents, bus, random));
+      for (const layer of ins.layers) voices.push(voiceOf(layer, note, start, dur, shiftCents, bus, random, parts.sampleSeconds));
     }
   }
 
