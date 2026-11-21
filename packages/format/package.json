@@ -1,0 +1,17 @@
+{
+  "name": "@sfx-atelier/format",
+  "version": "0.0.0",
+  "private": true,
+  "description": "sfx-bank / sfx-score の型・検証・正規化・版の移行（エディタとツール用）",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  }
+}

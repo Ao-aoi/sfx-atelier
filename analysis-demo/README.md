@@ -21,15 +21,15 @@ Cloudflare PagesのGit連携で次のように設定します。
 | 設定 | 値 |
 | --- | --- |
 | Production branch | `main` |
-| Build command | `exit 0` |
-| Build output directory | `.` |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
 | Root directory | 空欄（リポジトリのルート） |
 
 デプロイ後のURLは `https://<プロジェクト名>.pages.dev/analysis-demo/` です。ルートの `index.html` からもデモへ移動できます。
 
 ### デモだけを独立したPagesプロジェクトとして公開する
 
-Root directoryを `analysis-demo`、Build output directoryを `.` に設定します。デプロイ後は `https://<プロジェクト名>.pages.dev/` で開けます。
+Root directoryを `analysis-demo`、Build commandを `exit 0`、Build output directoryを `.` に設定します。デプロイ後は `https://<プロジェクト名>.pages.dev/` で開けます。
 
 ## 現在できること
 

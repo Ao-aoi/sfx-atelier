@@ -1,0 +1,18 @@
+{
+  "name": "sfx-atelier",
+  "private": true,
+  "description": "web ゲーム向けの軽量な効果音・ジングル作成ツール",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "node scripts/build-site.mjs",
+    "check:dist": "node scripts/check-dist.mjs",
+    "size": "npm run build -w @sfx-atelier/runtime && node scripts/check-size.mjs",
+    "test": "npm test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20.12"
+  }
+}
