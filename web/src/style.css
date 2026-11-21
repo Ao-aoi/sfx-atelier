@@ -139,3 +139,17 @@ button.add svg { width: 16px; height: 16px; }
   .work { grid-template-columns: 1fr; grid-template-rows: minmax(220px, 52%) 1fr; }
   .panels { border-left: 0; border-top: 1px solid var(--line); }
 }
+
+.analysis { display: contents; }
+textarea {
+  width: 100%; min-height: 72px; padding: 6px; resize: vertical;
+  border: 1px solid var(--line); border-radius: 6px; background: #11151e; color: inherit;
+  font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+button.ab {
+  min-width: 40px; min-height: 34px; padding: 0 10px;
+  border: 1px solid var(--line); border-radius: 8px; background: #11151e; cursor: pointer; font-weight: 650;
+}
+.row[hidden] { display: none; }
+.convert { display: grid; gap: 10px; }
+.convert:empty { display: none; }
