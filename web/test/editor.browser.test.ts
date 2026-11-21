@@ -211,3 +211,58 @@ describe("M6 の完了条件：MIDI を読み込んで編集・再生・分析�
     expect(r.metrics.start + r.metrics.length).toBeGreaterThan(0.45);
   });
 });
+
+describe("M7 の完了条件：Claude が保存した変更案を、エディタで開くと差分が出る", () => {
+  it("開く → 差分と A/B → 直して保存すると版が進む", async () => {
+    const { ServerPanel } = await import("../src/ui/server");
+    const { Server } = await import("../src/model/server");
+    const v1 = {
+      format: "sfx-score/1",
+      instruments: { a: { layers: [{ osc: "sine", ratio: 1 }] } },
+      tracks: [{ id: "t1", instrument: "a", notes: [{ id: "n1", t: 0, pitch: "A4" }, { id: "n2", t: 0.1, pitch: "E5" }] }],
+    };
+    const v2 = structuredClone(v1);
+    v2.tracks[0]!.notes[1]!.pitch = "D5";
+    const patch = { format: "sfx-patch/1", note: "2 音目を下げる", ops: [{ op: "set", path: ["tracks", "t1", "notes", "n2", "pitch"], value: "D5" }] };
+    const meta = { id: "s1", name: "chime", kind: "score", tags: [], updatedAt: "2026-11-21T00:00:00Z", createdAt: "2026-11-21T00:00:00Z", latestVersion: 2 };
+    const saved: unknown[] = [];
+    class Fake extends Server {
+      override async list() {
+        return [{ ...meta, version: 2, author: "claude" }] as never;
+      }
+      override async get(_id: string, version?: number) {
+        return (version === 1 ? { ...meta, version: 1, body: v1, author: "editor", note: null, patch: null } : { ...meta, version: 2, body: v2, author: "claude", note: patch.note, patch }) as never;
+      }
+      override async save(id: string, body: unknown, base: number, analysis?: string) {
+        saved.push({ id, base, analysis, body });
+        return { id, version: base + 1 };
+      }
+    }
+    try {
+      localStorage.removeItem("sfx-atelier:seen:s1");
+    } catch {}
+    const panel = new ServerPanel(m.app, () => {}, async () => "analysis-report/1 chime", new Fake());
+    root.append(panel.el);
+    await panel.pending;
+    await panel.open("s1");
+    expect(m.app.remote).toEqual({ id: "s1", name: "chime", kind: "score", version: 2 });
+    expect(m.app.score.tracks[0]!.notes[1]!.pitch).toBe("D5");
+    const lines = [...panel.el.querySelectorAll('[data-k="changes"] li')].map((li) => li.textContent);
+    expect(lines).toEqual(['tracks.t1.notes.n2.pitch "E5" → "D5"']);
+    expect(panel.el.textContent).toContain("2 音目を下げる");
+    expect(panel.el.querySelector<HTMLButtonElement>('button[aria-label="前の版を鳴らす"]')!.disabled).toBe(false);
+
+    // 直して保存：版 2 を base に、分析の要約を付けて送る
+    const g = root.querySelector<HTMLInputElement>('input[aria-label="層の音量"]')!;
+    g.value = "0.4";
+    g.dispatchEvent(new Event("input"));
+    await panel.save();
+    expect(saved).toHaveLength(1);
+    expect(saved[0]).toMatchObject({ id: "s1", base: 2, analysis: "analysis-report/1 chime" });
+    expect(m.app.remote?.version).toBe(3);
+    // 見た版を覚えるので、開き直しても差分は出ない
+    await panel.open("s1");
+    expect(panel.el.querySelector<HTMLElement>(".diff")!.hidden).toBe(true);
+    panel.el.remove();
+  });
+});

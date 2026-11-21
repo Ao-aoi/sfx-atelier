@@ -16,6 +16,14 @@ export interface Source {
   name: string;
 }
 
+/** サーバの作品から開いたとき：どの作品のどの版か（保存すると版が進む） */
+export interface Remote {
+  id: string;
+  name: string;
+  kind: "score" | "bank";
+  version: number;
+}
+
 export interface View {
   /** 1 秒の幅（px） */
   pps: number;
@@ -31,6 +39,8 @@ export interface View {
 export class App {
   readonly history = new History<Score>(emptyScore());
   source: Source | null = null;
+  /** サーバの作品から開いたとき。ほかの開き方をすると null に戻る */
+  remote: Remote | null = null;
   /** score を単体で開いたときのファイル名 */
   label = "";
   selTrack = "t1";
@@ -117,15 +127,17 @@ export class App {
     this.emit("doc");
   }
 
-  openScore(score: Score, label: string) {
+  openScore(score: Score, label: string, remote: Remote | null = null) {
+    this.remote = remote;
     this.source = null;
     this.label = label;
     this.load(score);
   }
 
-  openBank(bank: Bank, label: string, name?: string) {
+  openBank(bank: Bank, label: string, name?: string, remote: Remote | null = null) {
     const first = name ?? Object.keys(bank.sounds)[0];
     if (!first) return;
+    this.remote = remote;
     this.source = { label, bank, name: first };
     this.label = "";
     this.load(scoreFromBank(bank, first));
