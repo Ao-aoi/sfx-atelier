@@ -4,3 +4,4 @@ export * from "./defaults";
 export { noteNameToMidi } from "./pitch";
 export { validateBank, validateScore, type ValidationError, type ValidationResult } from "./validate";
 export { normalizeBank, normalizeScore, shrinkBank, shrinkScore } from "./normalize";
+export { applyPatch, PATCH_FORMAT, validatePatch, type Patch, type PatchOp, type PatchResult, type PathSegment } from "./patch";

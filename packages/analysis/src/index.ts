@@ -5,3 +5,7 @@ export { fromAudioBuffer, toMono } from "./signal";
 export type { Signal } from "./signal";
 export { averagePowerSpectrum, ENVELOPE_STEP, envelope, sfxMetrics } from "./sfx";
 export type { SfxMetrics } from "./sfx";
+export { MIN_TONAL_NOTES, midiToName, noteMidi, PITCH_CLASS_NAMES, symbolic } from "./symbolic";
+export type { ChordCandidate, ScaleCandidate, Symbolic } from "./symbolic";
+export { findings, layerText, MAX_FINDINGS, MAX_LINES, report, REPORT_FORMAT, voiceCount } from "./report";
+export type { Finding, ReportInput } from "./report";
