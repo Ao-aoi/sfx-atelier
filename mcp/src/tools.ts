@@ -3,7 +3,7 @@
  * 書き込みは作品（save_sound）・変更案（apply_patch）・用途と好みの記憶（update_context）だけ。
  * 音の描画は Workers ではできないので、聞こえ方の数字はエディタが付けた分析の要約（get_analysis）だけを返す。
  */
-import { normalizeBank, normalizeScore, shrinkBank, shrinkScore, type Bank, type Score, type Sound } from "@sfx-atelier/format";
+import { normalizeBank, normalizeScore, shrinkBank, shrinkScore, type Bank, type Score } from "@sfx-atelier/format";
 import {
   applyPatchToSound,
   createSound,
@@ -71,30 +71,16 @@ export function authorOf(clientName: string | undefined): string {
   return n || "mcp";
 }
 
-// ---- 縮めた JSON に id を戻す ----
+// ---- 縮めた JSON（id 付き） ----
 
-/** 縮めた形に、正規化で振られる id（トラック t1…、音符 n1…）を書き戻す。変更案の path で指せるように */
-function soundWithIds(shrunk: Sound, normalized: Sound): Sound {
-  return {
-    ...shrunk,
-    tracks: shrunk.tracks.map((t, i) => {
-      const nt = normalized.tracks[i]!;
-      return { id: nt.id, ...t, notes: t.notes.map((n, j) => ({ id: nt.notes[j]!.id, ...n })) };
-    }),
-  };
-}
-
+/** 縮めた JSON にトラック・音符の id を付けたもの（変更案の path で指せるように）。part はバンクの 1 音 */
 export function compactWithIds(body: Score | Bank, part?: string): Score | Bank {
-  if (body.format === "sfx-score/1") {
-    const norm = normalizeScore(body as Score);
-    return soundWithIds(shrinkScore(norm), norm) as Score;
-  }
-  const norm = normalizeBank(body as Bank);
-  const shrunk = shrinkBank(norm);
-  const names = part ? [part] : Object.keys(shrunk.sounds);
-  if (part && !shrunk.sounds[part]) throw new ToolInputError(`バンクに「${part}」がありません（${Object.keys(shrunk.sounds).join("・")}）`);
-  const sounds = Object.fromEntries(names.map((k) => [k, soundWithIds(shrunk.sounds[k]!, norm.sounds[k]!)]));
-  if (!part) return { ...shrunk, sounds };
+  // 保存した形は id を持つが、古い版や手で入れたものにも振る（正規化と同じ規則）
+  if (body.format === "sfx-score/1") return shrinkScore(normalizeScore(body as Score), { keepIds: true });
+  const shrunk = shrinkBank(normalizeBank(body as Bank), { keepIds: true });
+  if (!part) return shrunk;
+  if (!shrunk.sounds[part]) throw new ToolInputError(`バンクに「${part}」がありません（${Object.keys(shrunk.sounds).join("・")}）`);
+  const sounds = { [part]: shrunk.sounds[part]! };
   // 1 音だけ：その音が使う楽器・残響・録音だけを持たせる（path はバンクと同じ形のまま）
   const s = sounds[part]!;
   const used = new Set(s.tracks.map((t) => t.instrument));

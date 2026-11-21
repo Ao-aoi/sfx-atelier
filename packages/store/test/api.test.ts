@@ -46,7 +46,7 @@ function wav(extra = 4): Uint8Array {
 }
 
 describe("作品と版", () => {
-  it("作る → 読む（縮めた形で、既定値と id は落ちる）→ 一覧", async () => {
+  it("作る → 読む（縮めた形で、既定値は落ち、id は残る）→ 一覧", async () => {
     const env = makeEnv();
     const c = await call(env, "POST", "/sounds", { name: "discard", body: score(), tags: ["麻雀", "打牌", "麻雀"] });
     expect(c.status).toBe(201);
@@ -57,7 +57,7 @@ describe("作品と版", () => {
     expect(g.data.body).toEqual({
       format: "sfx-score/1",
       instruments: { 音: { layers: [{ osc: "sine", ratio: 1 }] } },
-      tracks: [{ instrument: "音", notes: [{ t: 0, pitch: "A4" }] }],
+      tracks: [{ id: "t1", instrument: "音", notes: [{ id: "n1", t: 0, pitch: "A4" }] }],
     });
     // 名前でも引ける
     expect((await call(env, "GET", `/sounds/${encodeURIComponent("discard")}`)).data.id).toBe(c.data.id);

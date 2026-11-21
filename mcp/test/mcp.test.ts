@@ -114,6 +114,19 @@ describe("ツール", () => {
     expect(vs.text.split("\n")[0]).toMatch(/^版 2 \| claude（変更案）/);
   });
 
+  it("id は版をまたいで変わらない：先頭に音符を足しても、元の n1 は n1 のまま", async () => {
+    const { env, userId } = await setup();
+    await tool(env, userId, "save_sound", { name: "chime", body: score });
+    const add = { format: "sfx-patch/1", ops: [{ op: "add", path: ["tracks", "t1", "notes"], at: 0, value: { t: 0, pitch: "C4" } }] };
+    expect((await tool(env, userId, "apply_patch", { sound: "chime", patch: add, base_version: 1 })).isError).toBe(false);
+    const notes = JSON.parse((await tool(env, userId, "get_sound", { sound: "chime" })).text.split("\n").at(-1)!).tracks[0].notes;
+    expect(notes.map((n: { id: string; pitch: string }) => [n.id, n.pitch])).toEqual([
+      ["n4", "C4"],
+      ["n1", "A4"],
+      ["n2", "E5"],
+    ]);
+  });
+
   it("save_sound に base_version を付けると新しい版、付けずに同じ名前なら断る", async () => {
     const { env, userId } = await setup();
     await tool(env, userId, "save_sound", { name: "chime", body: score });
