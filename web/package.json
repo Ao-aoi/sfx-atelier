@@ -1,0 +1,26 @@
+{
+  "name": "@sfx-atelier/web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "sfx-score を編集するエディタ（ピアノロール・音色・再生）",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest run && vitest run -c vitest.browser.config.ts",
+    "test:node": "vitest run",
+    "test:browser": "vitest run -c vitest.browser.config.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sfx-atelier/format": "*",
+    "@sfx-atelier/runtime": "*"
+  },
+  "devDependencies": {
+    "@vitest/browser-playwright": "^5.1.1",
+    "playwright": "~1.63.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
+}
