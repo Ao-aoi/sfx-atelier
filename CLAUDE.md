@@ -15,7 +15,7 @@ packages/
   runtime/     再生だけ（npm 名 @sfx-atelier/runtime）。依存なし。format からは型と既定値（defaults.ts）だけ import する
   analysis/    分析（FFT・特徴量・効果音向けの指標）。エディタとツールだけが使い、ランタイムには入れない
   (fit/ midi/ physics/  計画の M4.5 以降で足す)
-web/           エディタ（M3 で足す）
+web/           エディタ（Vite、フレームワークなし）。model/ は純粋な編集の操作・履歴・時間軸・読み書き（Node のテスト）、ui/ は画面（ブラウザのテスト）。Pages では /editor/
 analysis-demo/ 音響分析デモ（素の JavaScript。M4 で packages/analysis を使う側に置き換える）
 recordings/    録音の wav。リポジトリには置くが公開しない
 scripts/       Pages 用のビルドと CI の検査
