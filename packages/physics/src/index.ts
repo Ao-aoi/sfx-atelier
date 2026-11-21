@@ -2,3 +2,4 @@
 export * from "./room";
 export { sincos } from "./trig";
 export * from "./engine";
+export * from "./sound";
