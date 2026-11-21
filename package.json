@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "node scripts/build-site.mjs",
+    "build": "npm run build -w @sfx-atelier/compare && node scripts/build-site.mjs",
     "check:dist": "node scripts/check-dist.mjs",
     "size": "npm run build -w @sfx-atelier/runtime && node scripts/check-size.mjs",
     "test": "npm test --workspaces --if-present",
