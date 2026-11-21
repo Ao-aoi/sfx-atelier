@@ -54,6 +54,8 @@ function pickSound(name: string) {
 
 describe("ピアノロール", () => {
   it("空いた所を押すと音符が置かれ、元に戻す・やり直しができる", async () => {
+    pickSound("discard");
+    await frame();
     expect(m.app.source?.name).toBe("discard");
     const before = m.app.score.tracks[0]!.notes.length;
     const p = noteCenter("t1", "n1");
@@ -78,9 +80,10 @@ describe("ピアノロール", () => {
     pointer("pointerup", p.x + 100, p.y - 2 * m.app.view.row);
     const n = findNote(m.app.score, { track: "t1", note: "n2" })!;
     expect(n.t).toBeGreaterThan(t0);
-    expect(n.pitch).toBe("F#6");
+    // バンクの高さは Hz（E6 = 1318.5Hz）。2 行上は 2^(2/12) 倍
+    expect(n.pitch as number).toBeCloseTo(1318.5 * Math.pow(2, 2 / 12), 1);
     m.app.undo();
-    expect(findNote(m.app.score, { track: "t1", note: "n2" })).toMatchObject({ t: t0, pitch: "E6" });
+    expect(findNote(m.app.score, { track: "t1", note: "n2" })).toMatchObject({ t: t0, pitch: 1318.5 });
   });
 
   it("右端をつかんで長さを変える", async () => {
@@ -100,6 +103,8 @@ describe("ピアノロール", () => {
   });
 
   it("同じ音符を 2 回続けて押すと消える", async () => {
+    pickSound("discard");
+    await frame();
     const p = noteCenter("t1", "n1");
     pointer("pointerdown", p.x, p.y);
     pointer("pointerup", p.x, p.y);
@@ -111,6 +116,7 @@ describe("ピアノロール", () => {
 
 describe("編集欄", () => {
   it("層の減衰を変えると score が変わり、元に戻せる", () => {
+    pickSound("discard");
     const input = root.querySelector<HTMLInputElement>('input[aria-label="減衰（秒）"]')!;
     const before = m.app.score.instruments!.clack!.layers[0]!.env!.d;
     input.value = "0.08";

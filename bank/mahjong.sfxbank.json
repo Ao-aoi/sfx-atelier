@@ -1,0 +1,197 @@
+{
+  "format": "sfx-bank/1",
+  "master": { "compressor": { "threshold": -10, "ratio": 4, "attack": 0.002, "release": 0.12 } },
+  "reverb": { "room": { "seconds": 0.7, "decay": 3.2, "wet": 0.16 } },
+  "instruments": {
+    "clack": {
+      "layers": [
+        { "noise": "white", "filter": { "type": "bandpass", "freq": 3400, "q": 1.4 }, "gain": 0.55, "env": { "a": 0.001, "d": 0.035 } },
+        { "noise": "white", "filter": { "type": "bandpass", "freq": 7800, "q": 2.5 }, "gain": 0.12, "env": { "a": 0.001, "d": 0.012 } },
+        { "osc": "sine", "freq": 1180, "gain": 0.22, "env": { "d": 0.055 } },
+        { "osc": "sine", "freq": 2730, "gain": 0.1, "env": { "d": 0.028 } },
+        { "osc": "sine", "freq": 190, "gain": 0.5, "env": { "d": 0.09 }, "pitchEnv": { "toHz": 95, "time": "decay" } }
+      ]
+    },
+    "tick": {
+      "layers": [
+        { "noise": "white", "filter": { "type": "bandpass", "freq": 4800, "q": 2 }, "gain": 0.25, "env": { "a": 0.001, "d": 0.018 } },
+        { "osc": "sine", "freq": 1900, "gain": 0.16, "env": { "d": 0.035 } }
+      ]
+    },
+    "bell": {
+      "layers": [
+        { "osc": "sine", "ratio": 1, "env": { "a": 0.004, "d": 1 } },
+        { "osc": "sine", "ratio": 2.76, "gain": 0.25, "env": { "d": 0.4 } },
+        { "osc": "sine", "ratio": 5.4, "gain": 0.08, "env": { "a": 0.001, "d": 0.15 } }
+      ]
+    },
+    "slide": {
+      "layers": [{ "noise": "white", "filter": { "type": "bandpass", "freq": 2200, "q": 0.8 }, "gain": 0.12, "env": { "a": 0.03, "d": 0.07 } }]
+    },
+    "stick": {
+      "layers": [
+        { "noise": "white", "filter": { "type": "bandpass", "freq": 5200, "q": 3 }, "gain": 0.35, "env": { "a": 0.001, "d": 0.03 } },
+        { "osc": "sine", "freq": 2350, "gain": 0.12, "env": { "d": 0.05 } }
+      ]
+    },
+    "open": {
+      "layers": [
+        { "osc": "sine", "freq": 520, "gain": 0.22, "env": { "a": 0.006, "d": 0.07 }, "pitchEnv": { "toHz": 820, "time": "decay" } },
+        { "noise": "white", "filter": { "type": "bandpass", "freq": 1800, "q": 0.7 }, "gain": 0.05, "env": { "a": 0.02, "d": 0.06 } }
+      ]
+    },
+    "close": {
+      "layers": [{ "osc": "sine", "freq": 760, "gain": 0.2, "env": { "a": 0.006, "d": 0.07 }, "pitchEnv": { "toHz": 480, "time": "decay" } }]
+    },
+    "rumble": {
+      "layers": [{ "noise": "white", "filter": { "type": "bandpass", "freq": 420, "q": 0.6 }, "gain": 0.14, "env": { "a": 0.25, "d": 0.32 } }]
+    },
+    "thud": {
+      "layers": [{ "osc": "sine", "freq": 120, "gain": 0.6, "env": { "d": 0.2 }, "pitchEnv": { "toHz": 55, "time": "decay" } }]
+    },
+    "knock": {
+      "layers": [{ "noise": "white", "filter": { "type": "bandpass", "freq": 900, "q": 0.8 }, "gain": 0.18, "env": { "a": 0.001, "d": 0.06 } }]
+    },
+    "sticks-a": {
+      "layers": [
+        { "noise": "white", "filter": { "type": "bandpass", "freq": 4600, "q": 2.5 }, "gain": 0.3, "env": { "a": 0.001, "d": 0.025 }, "jitter": { "tune": 133 } },
+        { "osc": "sine", "freq": 1650, "gain": 0.1, "env": { "d": 0.04 }, "jitter": { "tune": 84 } }
+      ]
+    },
+    "sticks-b": {
+      "layers": [{ "noise": "white", "filter": { "type": "bandpass", "freq": 5200, "q": 3 }, "gain": 0.16, "env": { "a": 0.001, "d": 0.02 }, "jitter": { "tune": 133 } }]
+    },
+    "pop-up": {
+      "layers": [{ "osc": "sine", "freq": 330, "gain": 0.2, "env": { "a": 0.004, "d": 0.08 }, "pitchEnv": { "toHz": 700, "time": "decay" } }]
+    },
+    "pop-down": {
+      "layers": [{ "osc": "sine", "freq": 620, "gain": 0.12, "env": { "a": 0.004, "d": 0.12 }, "pitchEnv": { "toHz": 500, "time": "decay" } }]
+    }
+  },
+  "sounds": {
+    "select": {
+      "gain": 0.8,
+      "tracks": [{ "id": "t1", "instrument": "tick", "send": { "room": 0.4 }, "jitter": { "tune": 51 }, "notes": [{ "id": "n1", "t": 0 }] }]
+    },
+    "discard": {
+      "tracks": [{ "id": "t1", "instrument": "clack", "send": { "room": 1 }, "jitter": { "tune": 68 }, "notes": [{ "id": "n1", "t": 0 }] }]
+    },
+    "draw": {
+      "gain": 0.7,
+      "tracks": [
+        { "id": "t1", "instrument": "slide", "send": { "room": 0.5 }, "notes": [{ "id": "n1", "t": 0 }] },
+        { "id": "t2", "instrument": "tick", "send": { "room": 0.5 }, "jitter": { "tune": 51 }, "notes": [{ "id": "n2", "t": 0.08, "tune": -386 }] }
+      ]
+    },
+    "call": {
+      "gain": 1.05,
+      "tracks": [
+        {
+          "id": "t1", "instrument": "clack", "send": { "room": 1 }, "jitter": { "tune": 68 },
+          "notes": [{ "id": "n1", "t": 0, "tune": -89, "vel": 0.9 }, { "id": "n2", "t": 0.065, "tune": 34 }]
+        }
+      ]
+    },
+    "kan": {
+      "gain": 1.05,
+      "tracks": [
+        {
+          "id": "t1", "instrument": "clack", "send": { "room": 1 }, "jitter": { "tune": 34 },
+          "notes": [
+            { "id": "n1", "t": 0, "tune": -144, "vel": 0.75 },
+            { "id": "n2", "t": 0.055, "tune": -89, "vel": 0.83 },
+            { "id": "n3", "t": 0.11, "tune": -35, "vel": 0.91 },
+            { "id": "n4", "t": 0.165, "tune": 17, "vel": 0.99 }
+          ]
+        }
+      ]
+    },
+    "riichi": {
+      "tracks": [
+        { "id": "t1", "instrument": "stick", "send": { "room": 1 }, "notes": [{ "id": "n1", "t": 0 }] },
+        {
+          "id": "t2", "instrument": "bell", "send": { "room": 1 },
+          "notes": [
+            { "id": "n2", "t": 0.06, "pitch": 1568, "vel": 0.16, "dur": 0.9 },
+            { "id": "n3", "t": 0.14, "pitch": 2093, "vel": 0.12, "dur": 1 }
+          ]
+        }
+      ]
+    },
+    "win": {
+      "tracks": [
+        {
+          "id": "t1", "instrument": "bell", "send": { "room": 1.4 },
+          "notes": [
+            { "id": "n1", "t": 0, "pitch": 1046.5, "vel": 0.2, "dur": 1.5 },
+            { "id": "n2", "t": 0.085, "pitch": 1318.5, "vel": 0.18, "dur": 1.5 },
+            { "id": "n3", "t": 0.17, "pitch": 1568, "vel": 0.16, "dur": 1.5 },
+            { "id": "n4", "t": 0.255, "pitch": 2093, "vel": 0.14, "dur": 1.5 }
+          ]
+        }
+      ]
+    },
+    "win-other": {
+      "gain": 0.8,
+      "tracks": [
+        {
+          "id": "t1", "instrument": "bell", "send": { "room": 1.2 },
+          "notes": [
+            { "id": "n1", "t": 0, "pitch": 784, "vel": 0.16, "dur": 1 },
+            { "id": "n2", "t": 0.12, "pitch": 1046.5, "vel": 0.12, "dur": 1.1 }
+          ]
+        }
+      ]
+    },
+    "ryukyoku": {
+      "gain": 0.7,
+      "tracks": [
+        {
+          "id": "t1", "instrument": "bell", "send": { "room": 1.2 },
+          "notes": [
+            { "id": "n1", "t": 0, "pitch": 659, "vel": 0.13, "dur": 0.9 },
+            { "id": "n2", "t": 0.18, "pitch": 523, "vel": 0.13, "dur": 1.1 }
+          ]
+        }
+      ]
+    },
+    "open": {
+      "gain": 0.6,
+      "tracks": [{ "id": "t1", "instrument": "open", "send": { "room": 0.6 }, "notes": [{ "id": "n1", "t": 0 }] }]
+    },
+    "close": {
+      "gain": 0.6,
+      "tracks": [{ "id": "t1", "instrument": "close", "send": { "room": 0.6 }, "notes": [{ "id": "n1", "t": 0 }] }]
+    },
+    "ui": {
+      "gain": 0.55,
+      "tracks": [{ "id": "t1", "instrument": "tick", "send": { "room": 0.3 }, "jitter": { "tune": 34 }, "notes": [{ "id": "n1", "t": 0, "tune": 242 }] }]
+    },
+    "rise": {
+      "gain": 0.9,
+      "tracks": [
+        { "id": "t1", "instrument": "rumble", "send": { "room": 0.8 }, "notes": [{ "id": "n1", "t": 0 }] },
+        { "id": "t2", "instrument": "thud", "send": { "room": 0.8 }, "notes": [{ "id": "n2", "t": 0.3 }] },
+        { "id": "t3", "instrument": "knock", "send": { "room": 0.8 }, "notes": [{ "id": "n3", "t": 0.3 }] }
+      ]
+    },
+    "deal": {
+      "gain": 0.32,
+      "tracks": [{ "id": "t1", "instrument": "clack", "send": { "room": 0.5 }, "jitter": { "tune": 84 }, "notes": [{ "id": "n1", "t": 0, "tune": 133, "vel": 0.6 }] }]
+    },
+    "sticks": {
+      "gain": 0.55,
+      "tracks": [
+        { "id": "t1", "instrument": "sticks-a", "send": { "room": 0.6 }, "notes": [{ "id": "n1", "t": 0 }] },
+        { "id": "t2", "instrument": "sticks-b", "send": { "room": 0.6 }, "notes": [{ "id": "n2", "t": 0.05 }] }
+      ]
+    },
+    "pop": {
+      "gain": 0.6,
+      "tracks": [
+        { "id": "t1", "instrument": "pop-up", "send": { "room": 0.5 }, "notes": [{ "id": "n1", "t": 0 }] },
+        { "id": "t2", "instrument": "pop-down", "send": { "room": 0.5 }, "notes": [{ "id": "n2", "t": 0.08 }] }
+      ]
+    }
+  }
+}

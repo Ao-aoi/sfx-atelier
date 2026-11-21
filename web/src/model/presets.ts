@@ -1,6 +1,6 @@
-// プリセット：mahjong-sensei の音を書いたバンク。M2 で 16 音のバンクができたら、そちらに差し替える。
+// プリセット：mahjong-sensei の 16 音（M2 で移したバンク）。
 import type { Bank } from "@sfx-atelier/format/types";
-import mahjong from "../../../packages/runtime/test/fixtures/mahjong-5.sfxbank.json";
+import mahjong from "../../../bank/mahjong.sfxbank.json";
 
 export interface PresetBank {
   name: string;

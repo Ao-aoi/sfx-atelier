@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131b">
+  <title>A/B：mahjong 16 音</title>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:#10131b;color:#edf1f7}
+    *{box-sizing:border-box}
+    body{margin:0;padding:24px 16px;display:grid;place-items:start center}
+    main{width:min(560px,100%)}
+    h1{font-size:20px;margin:0 0 6px}
+    .legend{color:#9ca8ba;font-size:14px;margin:0 0 18px;display:flex;gap:16px;flex-wrap:wrap}
+    .legend b{color:#edf1f7}
+    ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+    li{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:10px 12px;border:1px solid #30394a;border-radius:12px;background:#191e29}
+    .name{font-family:ui-monospace,monospace;font-size:15px}
+    button{min-width:48px;height:40px;border:0;border-radius:10px;font:inherit;font-weight:700;cursor:pointer;background:#2a3346;color:#edf1f7}
+    button.b{background:#a8e6cf;color:#13251f}
+    button.ab{background:transparent;border:1px solid #30394a;color:#9ca8ba;font-weight:600}
+    button:active{transform:scale(.96)}
+    button:focus-visible{outline:3px solid #91b8ff;outline-offset:2px}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>mahjong 16 音</h1>
+    <p class="legend"><span><b>A</b> 今の sfx.ts</span><span><b>B</b> sfx-bank</span></p>
+    <ul id="list"></ul>
+  </main>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>
