@@ -5,7 +5,8 @@
   "workspaces": [
     "packages/*",
     "web",
-    "analysis-demo"
+    "analysis-demo",
+    "functions"
   ],
   "scripts": {
     "build": "npm run build -w @sfx-atelier/web && npm run build -w @sfx-atelier/compare && npm run build -w @sfx-atelier/analysis-demo && node scripts/build-site.mjs",

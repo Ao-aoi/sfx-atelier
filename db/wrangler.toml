@@ -1,0 +1,10 @@
+# D1 の migration を流すためだけの設定。手順は docs/setup-cloudflare.md
+#   npx wrangler d1 migrations apply sfx-atelier --remote -c db/wrangler.toml
+name = "sfx-atelier-db"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sfx-atelier"
+# npx wrangler d1 create sfx-atelier で出る database_id を入れる（秘密情報ではない）
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
