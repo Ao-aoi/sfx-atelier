@@ -160,8 +160,29 @@ describe("揺らぎと乱数", () => {
     expect(i).toBe(3);
   });
 
+  it("variation.time は音全体の遅れ（0〜time 秒）。乱数 0.5 で time の半分だけ全部の音符が遅れる", () => {
+    const p = compile(one([{ t: 0 }, { t: 0.1 }], { variation: { time: 0.04 } }), { instruments: { x: sine } }, fixed(0.5));
+    expect(p.voices.map((v) => v.start)).toEqual([0.02, 0.12000000000000001]);
+  });
+
+  it("トラックの jitter は音符ごとに 1 回引き、その音符の層が全部一緒に動く", () => {
+    // 2 層の楽器、音符 2 つ。乱数の並び：音符 1 の tune（1 → +100 セント）、音符 2 の tune（0 → -100 セント）
+    const ins = { x: { layers: [{ osc: "sine" as const, freq: 1000 }, { osc: "sine" as const, freq: 3000 }] } };
+    const s: Sound = { tracks: [{ instrument: "x", jitter: { tune: 100 }, notes: [{ t: 0 }, { t: 0.1 }] }] };
+    const seq = [1 - 1e-12, 0];
+    let i = 0;
+    const p = compile(s, { instruments: ins }, () => seq[i++]!);
+    const up = Math.pow(2, 100 / 1200);
+    expect(firstFreq(p, 0)[0]![2]).toBeCloseTo(1000 * up, 6);
+    expect(firstFreq(p, 1)[0]![2]).toBeCloseTo(3000 * up, 6);
+    expect(firstFreq(p, 2)[0]![2]).toBeCloseTo(1000 / up, 6);
+    expect(firstFreq(p, 3)[0]![2]).toBeCloseTo(3000 / up, 6);
+    expect(i).toBe(2);
+  });
+
   it("開始が負にならない", () => {
-    const p = compile(one([{ t: 0 }], { variation: { time: 0.05 } }), { instruments: { x: sine } }, fixed(0));
+    const s: Sound = { tracks: [{ instrument: "x", jitter: { time: 0.05 }, notes: [{ t: 0 }] }] };
+    const p = compile(s, { instruments: { x: sine } }, fixed(0));
     expect(p.voices[0]!.start).toBe(0);
   });
 
@@ -202,13 +223,28 @@ describe("組み立て", () => {
     expect(compile(s, { instruments: { x: sine } }, noRandom, { pan: 0.5 }).buses[0]!.pan).toBe(1);
   });
 
-  it("win：鈴の 3 層 × 4 音、C6 の基音は 1046.5Hz、dur は AD 型なので効かない", () => {
+  it("win：鈴の 3 層 × 4 音、C6 の基音は 1046.5Hz", () => {
     const p = compile(bank.sounds.win!, parts, noRandom);
     expect(p.voices).toHaveLength(12);
     expect(firstFreq(p, 0)[0]![2]).toBeCloseTo(1046.502, 3);
     expect(firstFreq(p, 1)[0]![2]).toBeCloseTo(1046.502 * 2.76, 2);
-    // 最後の音 0.255 秒 + 基音の a 4ms + d 1 秒
-    expect(p.end).toBeCloseTo(0.255 + 0.004 + 1 + STOP_MARGIN, 12);
+    // dur 1.5 秒：いちばん長い d（基音の 1 秒）が 1.5 秒になるので、最後の音 0.255 + a 4ms + 1.5
+    expect(p.end).toBeCloseTo(0.255 + 0.004 + 1.5 + STOP_MARGIN, 12);
+  });
+
+  it("減衰だけの楽器は dur で全部の層の d を同じ倍率で伸ばす（鈴の 1・0.4・0.15 秒 → dur 1.5 で 1.5・0.6・0.225 秒）", () => {
+    const p = compile(bank.sounds.win!, parts, noRandom);
+    // 1 音目（0 秒）の 3 層の無音になる時刻 = a + d × 1.5
+    expect(p.voices[0]!.gain.at(-1)![1]).toBeCloseTo(0.004 + 1.5, 12);
+    expect(p.voices[1]!.gain.at(-1)![1]).toBeCloseTo(0.002 + 0.6, 12);
+    expect(p.voices[2]!.gain.at(-1)![1]).toBeCloseTo(0.001 + 0.225, 12);
+  });
+
+  it("dur の伸び縮みは pitchEnv の time: decay にも効く", () => {
+    // clack の 5 層目（d 90ms、いちばん長い d も 90ms）に dur 0.18 → d 0.18、ピッチ変化も 0.18 秒
+    const s: Sound = { tracks: [{ instrument: "clack", notes: [{ t: 0, dur: 0.18 }] }] };
+    const p = compile(s, parts, fixed(0.5));
+    expect(firstFreq(p, 4)[1]).toEqual(["exp", 0.18, 95]);
   });
 
   it("録音の層：再生速度 = ratio × tune", () => {

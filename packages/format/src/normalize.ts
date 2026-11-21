@@ -69,6 +69,7 @@ function normSound(s: Sound): Sound {
     ...TRACK_DEFAULT,
     send: {},
     ...t,
+    jitter: { ...JITTER_DEFAULT, ...t.jitter },
     id: t.id ?? nextTrack(),
     notes: t.notes.map((n): Note => ({ ...NOTE_DEFAULT, ...n, id: n.id ?? nextNote() })),
   }));
@@ -142,6 +143,7 @@ function shrinkSound(s: Sound): Sound {
     return clean({
       ...drop(rest, TRACK_DEFAULT),
       send: t.send && orNone(drop(t.send, {})),
+      jitter: t.jitter && orNone(drop(t.jitter, JITTER_DEFAULT)),
       notes: t.notes.map((n) => {
         const { id: _nid, ...nr } = n;
         return drop(nr, NOTE_DEFAULT);

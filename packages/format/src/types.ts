@@ -36,7 +36,12 @@ export interface Filter {
   gain?: number;
 }
 
-/** 揺らぎ。tune はセント、gain は割合（0.1 なら ±10%）、time は秒 */
+/**
+ * 揺らぎ。tune はセント、gain は割合（0.1 なら ±10%）、time は秒。
+ * 音全体の variation は鳴らすたびに 1 回（time は 0〜time 秒の遅れ）、
+ * トラックの jitter は音符ごとに 1 回（その音符の層が全部一緒に動く）、
+ * 層の jitter は層ごと・音符ごとに 1 回（tune・time は ±、gain は ±割合）。
+ */
 export interface Jitter {
   tune?: number;
   gain?: number;
@@ -89,7 +94,10 @@ export interface Note {
   id?: string;
   /** 開始。time.unit の単位（秒か拍） */
   t: number;
-  /** 長さ。無ければ楽器の減衰で決まる */
+  /**
+   * 長さ。無ければ楽器の減衰で決まる。
+   * 減衰だけの楽器（s = 0 の層）では、いちばん長い層の d がこの長さになるように、全部の層の d を同じ倍率で伸び縮みさせる
+   */
   dur?: number;
   /** 音名（"A4"、"C#5"、"Eb3"）か Hz */
   pitch?: string | number;
@@ -99,6 +107,7 @@ export interface Note {
   vel?: number;
 }
 
+
 export interface Track {
   id?: string;
   /** instruments のキー */
@@ -107,6 +116,8 @@ export interface Track {
   pan?: number;
   /** 残響の名前 → 送り量 */
   send?: Record<string, number>;
+  /** 音符ごとの揺らぎ（その音符の層が全部一緒に動く） */
+  jitter?: Jitter;
   notes: Note[];
 }
 
@@ -134,6 +145,8 @@ export interface Reverb {
   decay: number;
   /** 0〜1 */
   wet?: number;
+  /** 早期反射：[時刻（秒）, 強さ] の並び。インパルス応答のその時刻に足す（部屋のモデルの結果を入れる） */
+  early?: [number, number][];
 }
 
 export interface Compressor {
