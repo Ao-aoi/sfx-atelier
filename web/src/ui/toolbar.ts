@@ -1,6 +1,6 @@
 // 上の帯：開く・保存・音の切り替え・元に戻す・再生・時間の単位・表示。
 import type { App } from "../app";
-import { bankJson, emptyScore, parseJson, scoreJson } from "../model/io";
+import { bankJson, emptyScore, isMidi, midiBytes, parseJson, parseMidi, scoreJson } from "../model/io";
 import { deleteNotes, setTime } from "../model/ops";
 import { PRESETS } from "../model/presets";
 import { h, iconButton, numberInput, select } from "./dom";
@@ -19,7 +19,7 @@ export class Toolbar {
   private snapBtn: HTMLButtonElement;
   private bankBtn: HTMLButtonElement;
   private timeBox = h("span", { class: "group" });
-  private file = h("input", { type: "file", accept: ".json,application/json", hidden: true });
+  private file = h("input", { type: "file", accept: ".json,application/json,.mid,.midi,audio/midi", hidden: true });
   readonly status = h("div", { class: "status", role: "status", "aria-live": "polite" });
 
   constructor(
@@ -48,6 +48,7 @@ export class Toolbar {
         { class: "group" },
         iconButton(ICON.open, "開く", () => this.file.click()),
         iconButton(ICON.download, "保存", () => this.saveScore()),
+        iconButton(ICON.midi, "MIDI で保存", () => this.saveMidi()),
         this.bankBtn,
         iconButton(ICON.copy, "JSON をコピー", () => void this.copy()),
         this.file,
@@ -165,7 +166,15 @@ export class Toolbar {
     const f = this.file.files?.[0];
     this.file.value = "";
     if (!f) return;
-    const r = parseJson(await f.text());
+    const bytes = new Uint8Array(await f.arrayBuffer());
+    if (isMidi(bytes)) {
+      const m = parseMidi(bytes);
+      if (m.kind === "error") return this.say(m.errors.join("\n"), true);
+      this.app.openScore(m.score, f.name.replace(/\.midi?$/i, ""));
+      if (m.warnings.length) this.say(m.warnings.slice(0, 5).join("\n"));
+      return;
+    }
+    const r = parseJson(new TextDecoder().decode(bytes));
     if (r.kind === "error") return this.say(r.errors.slice(0, 5).join("\n"), true);
     if (r.kind === "bank") this.app.openBank(r.bank, f.name);
     else this.app.openScore(r.score, f.name);
@@ -173,6 +182,12 @@ export class Toolbar {
 
   private saveScore() {
     download(`${this.app.baseName}.sfxscore.json`, scoreJson(this.app.score));
+  }
+
+  private saveMidi() {
+    const { bytes, warnings } = midiBytes(this.app.score);
+    download(`${this.app.baseName}.mid`, bytes, "audio/midi");
+    this.say(warnings.join("\n"));
   }
 
   private saveBank() {
@@ -200,8 +215,8 @@ export class Toolbar {
   }
 }
 
-function download(name: string, text: string) {
-  const url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+function download(name: string, data: string | Uint8Array, type = "application/json") {
+  const url = URL.createObjectURL(new Blob([data as BlobPart], { type }));
   const a = h("a", { href: url, download: name });
   document.body.append(a);
   a.click();

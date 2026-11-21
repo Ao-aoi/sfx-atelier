@@ -11,6 +11,7 @@ import {
   type Bank,
   type Score,
 } from "@sfx-atelier/format";
+import { MidiError, midiToScore, readSmf, scoreToMidi, writeSmf } from "@sfx-atelier/midi";
 
 export type Loaded = { kind: "score"; score: Score } | { kind: "bank"; bank: Bank } | { kind: "error"; errors: string[] };
 
@@ -32,6 +33,26 @@ export function parseJson(text: string): Loaded {
     return r.ok ? { kind: "score", score: normalizeScore(r.value) } : { kind: "error", errors: r.errors.map(errorText) };
   }
   return { kind: "error", errors: [`format が ${SCORE_FORMAT} でも ${BANK_FORMAT} でもありません`] };
+}
+
+/** 先頭が MThd なら MIDI ファイル */
+export const isMidi = (bytes: Uint8Array) => bytes.length >= 4 && String.fromCharCode(...bytes.subarray(0, 4)) === "MThd";
+
+/** MIDI ファイルを読んで score にする。落としたもの（ピッチベンドなど）は warnings で返す */
+export function parseMidi(bytes: Uint8Array): { kind: "score"; score: Score; warnings: string[] } | { kind: "error"; errors: string[] } {
+  try {
+    const { score, warnings } = midiToScore(readSmf(bytes));
+    return { kind: "score", score, warnings };
+  } catch (e) {
+    if (e instanceof MidiError) return { kind: "error", errors: [e.message] };
+    throw e;
+  }
+}
+
+/** score を MIDI ファイルのバイト列にする */
+export function midiBytes(score: Score): { bytes: Uint8Array; warnings: string[] } {
+  const { smf, warnings } = scoreToMidi(score);
+  return { bytes: writeSmf(smf), warnings };
 }
 
 const errorText = (e: { path: string; message: string }) => `${e.path}: ${e.message}`;

@@ -17,7 +17,7 @@ packages/
   analysis/    分析（FFT・特徴量・効果音向けの指標）。エディタとツールだけが使い、ランタイムには入れない
   physics/     物理エンジン（2.5D の剛体・接触の出来事）と部屋の反響の簡易モデル。エディタとツールだけが使う
   fit/         波形 → 層（減衰する正弦波＋帯域雑音）への変換（M4.5）。エディタとツールだけが使う
-  (midi/  計画の M6 で足す)
+  midi/        標準 MIDI ファイルの読み書きと sfx-score との変換（M6）。エディタとツールだけが使う
 web/           エディタ（Vite、フレームワークなし）。model/ は純粋な編集の操作・履歴・時間軸・読み書き（Node のテスト）、ui/ は画面（ブラウザのテスト）。Pages では /editor/
 analysis-demo/ 音響分析デモ（JavaScript。計算は packages/analysis を使い、Vite でビルドする）
 bank/          ゲームに配るバンク（mahjong.sfxbank.json）

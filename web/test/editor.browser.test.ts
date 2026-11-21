@@ -175,3 +175,39 @@ describe("M3 の完了条件：discard・win・riichi を開いて直し、鳴�
     });
   }
 });
+
+describe("M6 の完了条件：MIDI を読み込んで編集・再生・分析する", () => {
+  it("ファイルから開き、層を直し、鳴らして測る", async () => {
+    const { midiBytes } = await import("../src/model/io");
+    const { measure } = await import("../src/model/analyze");
+    const src = parseJson(
+      '{"format":"sfx-score/1","time":{"unit":"beat","bpm":150},"instruments":{"ピアノ":{"layers":[{"osc":"triangle","ratio":1}]},"バスドラム":{"layers":[{"osc":"sine","freq":150}]}},"tracks":[{"instrument":"ピアノ","notes":[{"t":0,"dur":0.5,"pitch":"C5"},{"t":0.5,"dur":0.5,"pitch":"E5"},{"t":1,"dur":1,"pitch":"G5"}]},{"instrument":"バスドラム","notes":[{"t":0,"pitch":"C2"},{"t":1,"pitch":"C2"}]}]}',
+    );
+    if (src.kind !== "score") throw new Error("読めない");
+    const { bytes } = midiBytes(src.score);
+    const input = root.querySelector<HTMLInputElement>('input[type="file"]')!;
+    const dt = new DataTransfer();
+    dt.items.add(new File([bytes as BlobPart], "jingle.mid", { type: "audio/midi" }));
+    input.files = dt.files;
+    input.dispatchEvent(new Event("change"));
+    await expect.poll(() => m.app.label).toBe("jingle");
+    const s0 = m.app.score;
+    expect(s0.time).toEqual({ unit: "beat", bpm: 150 });
+    expect(s0.tracks.map((t) => [t.instrument, t.notes.length])).toEqual([
+      ["ピアノ", 3],
+      ["バスドラム", 2],
+    ]);
+
+    const g = root.querySelector<HTMLInputElement>('input[aria-label="層の音量"]')!;
+    g.value = "0.3";
+    g.dispatchEvent(new Event("input"));
+    expect(m.app.score.instruments!["ピアノ"]!.layers[0]!.gain).toBe(0.3);
+
+    const r = await measure(m.app.score);
+    expect(r.metrics.peakDb).toBeGreaterThan(-46);
+    // 割れていない
+    expect(r.metrics.peakDb).toBeLessThan(-0.5);
+    // 150 BPM の 1 拍 = 0.4 秒に最後の音が始まり、それより後まで鳴っている
+    expect(r.metrics.start + r.metrics.length).toBeGreaterThan(0.45);
+  });
+});
