@@ -18,3 +18,8 @@ Thumbs.db
 # wrangler のローカル状態
 .wrangler/
 .vitest/
+
+# ランタイムの npm 公開用（scripts/pack-runtime.mjs が作る）
+packages/runtime/npm/
+packages/runtime/npm-tmp/
+packages/runtime/npm-check/

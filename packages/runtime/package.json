@@ -1,6 +1,6 @@
 {
   "name": "@sfx-atelier/runtime",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "sfx-bank を Web Audio で鳴らす再生ライブラリ（依存なし、gzip 後 10KB 以下）",
   "type": "module",
@@ -20,5 +20,6 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.8",
     "vitest": "^5.1.1"
-  }
+  },
+  "license": "MIT"
 }

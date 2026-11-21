@@ -6,7 +6,8 @@ web ゲーム向けの軽量な効果音・ジングルを作るツール。Web 
 
 - 要件定義（初版）と技術構成の提案：[docs/tech-proposal.md](docs/tech-proposal.md)
 - 実装計画：[docs/implementation-plan.md](docs/implementation-plan.md)（PR #4）
-- 状態：M0（土台）。ブラウザ内で動く音響分析デモが `analysis-demo/` にある
+- 状態：M0〜M7 を実装（M2 の mahjong-sensei への移行は聞き比べ待ち）。エディタは `/editor/`、聞き比べは `/ab/`、音響分析デモは `/analysis-demo/`
+- 保存と MCP の設定：[docs/setup-cloudflare.md](docs/setup-cloudflare.md)・[docs/setup-mcp.md](docs/setup-mcp.md)
 
 ## 実験デモ
 
@@ -22,7 +23,18 @@ npm test
 npm run size        # ランタイムが gzip 後 10KB 以下か
 npm run build       # Pages に出すものを dist/ に集める
 npm run check:dist  # dist/ に recordings/ と .wav が無いか
+npm run pack:runtime && npm run check:pack  # ランタイムの npm 公開用の形を packages/runtime/npm/ に作って確かめる
 ```
+
+## ランタイムの npm 公開
+
+```bash
+npm run pack:runtime && npm run check:pack
+npm login
+npm publish packages/runtime/npm --access public
+```
+
+版は `packages/runtime/package.json` の `version` を上げてから出す。
 
 ## Cloudflare Pages へのデプロイ
 

@@ -14,7 +14,9 @@
     "check:dist": "node scripts/check-dist.mjs",
     "size": "npm run build -w @sfx-atelier/runtime && node scripts/check-size.mjs",
     "test": "npm test --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "pack:runtime": "node scripts/pack-runtime.mjs",
+    "check:pack": "node scripts/check-pack.mjs"
   },
   "engines": {
     "node": ">=20.12"
