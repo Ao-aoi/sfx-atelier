@@ -20,5 +20,7 @@ export const ICON = {
   mute: svg('<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/>'),
   file: svg('<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/>'),
   midi: svg('<circle cx="7" cy="18" r="3"/><circle cx="17" cy="16" r="3"/><path d="M10 18V5l10-2v13"/>'),
+  upload: svg('<path d="M7 18a4 4 0 0 1-.6-8 6 6 0 0 1 11.6-1.5A4.5 4.5 0 0 1 17.5 18"/><path d="M12 12v8M9 15l3-3 3 3"/>'),
+  refresh: svg('<path d="M20 11a8 8 0 0 0-14.9-3.5L4 9"/><path d="M4 4v5h5"/><path d="M4 13a8 8 0 0 0 14.9 3.5L20 15"/><path d="M20 20v-5h-5"/>'),
   bank: svg('<rect x="3" y="4" width="18" height="5" rx="1"/><rect x="3" y="11" width="18" height="5" rx="1"/><path d="M7 20h10"/>'),
 };

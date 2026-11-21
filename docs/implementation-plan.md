@@ -157,6 +157,7 @@ M3・M4・M5a・5b・5e・M6 は M1 が終われば並行して進められる�
 **進み**：
 - 7a：D1 のスキーマ（`db/migrations`）と保存 API（`packages/store`・`functions/`）。作品・版・タグ・録音（R2）・用途と好みの記憶。認証は mahjong-sensei の Access の検証を写した（分かれ道「MCP の実装を共有するか」は推奨どおり写して始めた）。ダッシュボードの設定は [setup-cloudflare.md](setup-cloudflare.md)
 - 7b：MCP サーバ（`mcp/`）。ツールは get_context・update_context・list_sounds・get_sound（縮めた JSON に id を付ける。バンクは 1 音だけも）・list_versions・get_analysis・apply_patch・save_sound。分析の要約は Workers では描画できないので、エディタが保存のときに付けたものを返す。設定は [setup-mcp.md](setup-mcp.md)
+- 7c：エディタの「作品」欄。サーバの作品を開く・保存する（保存のときに分析の要約を付けるので、Claude が get_analysis で読める）。開いた版が前に見た版より新しければ、差分（トラック・音符は id で対応させる）と A/B を出す。保存した作品はトラック・音符の id を持つ（版をまたいで同じ音符を指せる）
 
 ### 後回し
 
