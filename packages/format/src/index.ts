@@ -1,4 +1,6 @@
-// sfx-bank / sfx-score の型・検証（正規化・縮小・版の移行は M1 の続きで足す）
+// sfx-bank / sfx-score の型・検証・正規化・縮小（版の移行は版 2 を作るときに足す）
 export * from "./types";
+export * from "./defaults";
 export { noteNameToMidi } from "./pitch";
 export { validateBank, validateScore, type ValidationError, type ValidationResult } from "./validate";
+export { normalizeBank, normalizeScore, shrinkBank, shrinkScore } from "./normalize";

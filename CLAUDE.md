@@ -12,7 +12,7 @@ web ゲーム向けの軽量な効果音・ジングルを作るツール。Web 
 ```
 packages/
   format/      sfx-bank / sfx-score の型・検証・正規化・版の移行。エディタとツールだけが使う
-  runtime/     再生だけ（npm 名 @sfx-atelier/runtime）。依存なし。format からは型だけ import する
+  runtime/     再生だけ（npm 名 @sfx-atelier/runtime）。依存なし。format からは型と既定値（defaults.ts）だけ import する
   (analysis/ fit/ midi/ physics/  計画の M4 以降で足す)
 web/           エディタ（M3 で足す）
 analysis-demo/ 音響分析デモ（素の JavaScript。M4 で packages/analysis を使う側に置き換える）
