@@ -16,7 +16,8 @@ packages/
   compare/     聞き比べ：mahjong-sensei の sfx.ts（基準）と sfx-bank を同じ種で描画して数字で比べる。A/B のページ（Pages の /ab/）
   analysis/    分析（FFT・特徴量・効果音向けの指標）。エディタとツールだけが使い、ランタイムには入れない
   physics/     物理エンジン（2.5D の剛体・接触の出来事）と部屋の反響の簡易モデル。エディタとツールだけが使う
-  (fit/ midi/  計画の M4.5 以降で足す)
+  fit/         波形 → 層（減衰する正弦波＋帯域雑音）への変換（M4.5）。エディタとツールだけが使う
+  (midi/  計画の M6 で足す)
 web/           エディタ（M3 で足す）
 analysis-demo/ 音響分析デモ（素の JavaScript。M4 で packages/analysis を使う側に置き換える）
 bank/          ゲームに配るバンク（mahjong.sfxbank.json）
