@@ -51,13 +51,18 @@ export function makeNoise(ctx: BaseAudioContext, type: NoiseType, random: Random
   return buf;
 }
 
-/** 部屋の残響のインパルス応答：減衰する雑音（ステレオ）。(1 - i/n)^decay で消える */
+/** 部屋の残響のインパルス応答：減衰する雑音（ステレオ）。(1 - i/n)^decay で消える。早期反射があれば、その時刻に足す */
 export function makeImpulse(ctx: BaseAudioContext, r: Reverb, random: Random): AudioBuffer {
   const n = Math.max(1, Math.floor(ctx.sampleRate * r.seconds));
   const buf = ctx.createBuffer(2, n, ctx.sampleRate);
   for (let ch = 0; ch < 2; ch++) {
     const d = buf.getChannelData(ch);
     for (let i = 0; i < n; i++) d[i] = (random() * 2 - 1) * Math.pow(1 - i / n, r.decay);
+    // 早期反射は左右とも同じ時刻に足す（左右の違いは呼び出しの pan で付ける）
+    for (const [t, g] of r.early ?? []) {
+      const i = Math.round(t * ctx.sampleRate);
+      if (i < n) d[i]! += g;
+    }
   }
   return buf;
 }

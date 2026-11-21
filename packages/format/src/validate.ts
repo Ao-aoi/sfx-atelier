@@ -18,6 +18,8 @@ const FILTER = ["lowpass", "highpass", "bandpass", "notch", "peaking", "lowshelf
 const CURVE = ["exp", "lin"];
 /** 聞こえる範囲より少し広く取る。ナイキスト周波数は端末で違うので、ここでは上限だけ決める */
 const MAX_HZ = 24000;
+/** 早期反射の数の上限（鏡像法の 2 次までなら 6 面 + 18 = 24 本で足りる） */
+const MAX_EARLY = 32;
 
 type Obj = Record<string, unknown>;
 
@@ -124,10 +126,23 @@ class Checker {
   }
 
   reverb(v: unknown, path: string) {
-    if (!this.obj(v, path, ["seconds", "decay", "wet"])) return;
+    if (!this.obj(v, path, ["seconds", "decay", "wet", "early"])) return;
     this.num(v, "seconds", path, { required: true, gt: 0, max: 10 });
     this.num(v, "decay", path, { required: true, gt: 0 });
     this.num(v, "wet", path, { min: 0, max: 1 });
+    if (v.early !== undefined) {
+      const ep = join(path, "early");
+      const sec = typeof v.seconds === "number" ? v.seconds : Infinity;
+      if (!Array.isArray(v.early)) this.err(ep, "配列ではありません");
+      else if (v.early.length > MAX_EARLY) this.err(ep, `${MAX_EARLY} 個までにしてください`);
+      else
+        v.early.forEach((e, i) => {
+          const ok =
+            Array.isArray(e) && e.length === 2 && e.every((x) => typeof x === "number" && Number.isFinite(x)) &&
+            e[0] >= 0 && e[0] < sec && Math.abs(e[1]) <= 1;
+          if (!ok) this.err(`${ep}[${i}]`, "[0 以上 seconds 未満の時刻, -1〜1 の強さ] にしてください");
+        });
+    }
   }
 
   instrument(v: unknown, path: string) {
@@ -247,7 +262,8 @@ class Checker {
   }
 
   track(v: unknown, path: string, trackIds: Set<string>, noteIds: Set<string>) {
-    if (!this.obj(v, path, ["id", "instrument", "gain", "pan", "send", "notes"])) return;
+    if (!this.obj(v, path, ["id", "instrument", "gain", "pan", "send", "jitter", "notes"])) return;
+    if (v.jitter !== undefined) this.variation(v.jitter, join(path, "jitter"));
     this.id(v, path, trackIds);
     this.str(v, "instrument", path, true);
     if (typeof v.instrument === "string" && v.instrument !== "" && !this.instruments.has(v.instrument)) {

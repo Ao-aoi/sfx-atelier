@@ -97,31 +97,39 @@ export function envelope(
   return { gain: events as Automation, end };
 }
 
-/** 1 つの層を 1 つの声にする。乱数は jitter の tune → gain → time の順に引く（0 の項目は引かない） */
-function voiceOf(
-  layer: Layer,
-  note: Note,
-  noteStart: number,
-  noteDur: number | undefined,
-  shiftCents: number,
-  bus: number,
-  random: Random,
-  sampleSeconds: Record<string, number> | undefined,
-): Voice {
+/** 1 つの音符の、層に共通する値 */
+interface NoteCtx {
+  pitch: Note["pitch"];
+  start: number;
+  dur: number | undefined;
+  /** 音符の tune ＋ 音全体・トラックの揺らぎ（セント） */
+  cents: number;
+  /** vel × トラックの揺らぎ */
+  gain: number;
+  /** 減衰だけの層の d に掛ける倍率（dur から決まる） */
+  adScale: number;
+  bus: number;
+}
+
+const envDefaultsOf = (layer: Layer): Required<Envelope> => ("sample" in layer ? SAMPLE_ENV_DEFAULT : ENV_DEFAULT);
+const isAD = (layer: Layer) => (layer.env?.s ?? envDefaultsOf(layer).s) === 0;
+
+/** 1 つの層を 1 つの声にする。乱数は層の jitter の tune → gain → time の順に引く（0 の項目は引かない） */
+function voiceOf(layer: Layer, n: NoteCtx, random: Random, sampleSeconds: Record<string, number> | undefined): Voice {
   const j: Jitter = layer.jitter ?? {};
-  const c = shiftCents + spread(random, j.tune ?? 0);
+  const c = n.cents + spread(random, j.tune ?? 0);
   const g = 1 + spread(random, j.gain ?? 0);
-  const start = Math.max(0, noteStart + spread(random, j.time ?? 0));
+  const start = Math.max(0, n.start + spread(random, j.time ?? 0));
   const shift = cents(c);
 
-  const peak = (layer.gain ?? LAYER_DEFAULT.gain) * (note.vel ?? NOTE_DEFAULT.vel) * g;
+  const peak = (layer.gain ?? LAYER_DEFAULT.gain) * n.gain * g;
   const isSample = "sample" in layer;
-  const envDefaults = isSample ? SAMPLE_ENV_DEFAULT : ENV_DEFAULT;
+  const envDefaults = envDefaultsOf(layer);
+  const d = (layer.env?.d ?? envDefaults.d) * (isAD(layer) ? n.adScale : 1);
   // 録音は、dur が無ければ録音の長さ ÷ 再生速度だけ鳴らす
   const len = isSample ? sampleSeconds?.[layer.sample] : undefined;
-  const dur = noteDur ?? (isSample && len !== undefined ? len / ((layer.ratio ?? SAMPLE_DEFAULT.ratio) * shift) : undefined);
-  const env = envelope(layer.env, start, peak, dur, envDefaults);
-  const d = layer.env?.d ?? envDefaults.d;
+  const dur = n.dur ?? (isSample && len !== undefined ? len / ((layer.ratio ?? SAMPLE_DEFAULT.ratio) * shift) : undefined);
+  const env = envelope({ ...layer.env, d }, start, peak, dur, envDefaults);
 
   /** 周波数の予定（ピッチ変化つき）。from は開始の周波数 */
   const freqAuto = (from: number): Automation => {
@@ -138,7 +146,7 @@ function voiceOf(
 
   let source: Voice["source"];
   if ("osc" in layer) {
-    const base = layer.freq !== undefined ? layer.freq : pitchHz(note.pitch) * (layer.ratio ?? 1);
+    const base = layer.freq !== undefined ? layer.freq : pitchHz(n.pitch) * (layer.ratio ?? 1);
     source = { kind: "osc", type: layer.osc, freq: freqAuto(base * shift) };
   } else if ("noise" in layer) {
     source = { kind: "noise", type: layer.noise, offset: random() * NOISE_OFFSET };
@@ -157,7 +165,7 @@ function voiceOf(
   }
 
   const voice: Voice = {
-    bus,
+    bus: n.bus,
     start,
     stop: env.end + STOP_MARGIN,
     source,
@@ -177,9 +185,10 @@ function voiceOf(
 }
 
 /**
- * 乱数を引く順番：
- * 1. 音全体の variation の tune → gain（0 の項目は引かない）
- * 2. トラック順・音符順に、音符ごとの variation.time、続けてその音符の層ごとに jitter（tune → gain → time）と雑音の読み出し位置
+ * 乱数を引く順番（0 の項目は引かない）：
+ * 1. 音全体の variation の tune → gain → time
+ * 2. トラック順・音符順に、トラックの jitter（tune → gain → time）、
+ *    続けてその音符の層ごとに、層の jitter（tune → gain → time）と雑音の読み出し位置
  */
 export function compile(sound: Sound, parts: Parts, random: Random, opts: CompileOptions = {}): Plan {
   const time = sound.time ?? { unit: "sec" };
@@ -187,6 +196,8 @@ export function compile(sound: Sound, parts: Parts, random: Random, opts: Compil
   const v = sound.variation ?? {};
   const soundCents = spread(random, v.tune ?? 0);
   const soundGain = 1 + spread(random, v.gain ?? 0);
+  // 音全体の遅れは 0〜time 秒（前にずらすと delay より早く鳴ってしまうので、遅らせる方だけ）
+  const soundDelay = v.time ? random() * v.time : 0;
 
   const buses: Bus[] = [];
   const voices: Voice[] = [];
@@ -203,11 +214,24 @@ export function compile(sound: Sound, parts: Parts, random: Random, opts: Compil
       pan: clampPan((track.pan ?? TRACK_DEFAULT.pan) + (opts.pan ?? 0)),
       sends,
     });
+    // 減衰だけの層で、いちばん長い d（dur で伸び縮みさせる基準）
+    const longestD = Math.max(0, ...ins.layers.filter(isAD).map((l) => l.env?.d ?? envDefaultsOf(l).d));
+    const tj: Jitter = track.jitter ?? {};
     for (const note of track.notes) {
-      const start = Math.max(0, note.t * beat + spread(random, v.time ?? 0));
+      const tc = spread(random, tj.tune ?? 0);
+      const tg = 1 + spread(random, tj.gain ?? 0);
+      const tt = spread(random, tj.time ?? 0);
       const dur = note.dur === undefined ? undefined : note.dur * beat;
-      const shiftCents = (note.tune ?? NOTE_DEFAULT.tune) + soundCents;
-      for (const layer of ins.layers) voices.push(voiceOf(layer, note, start, dur, shiftCents, bus, random, parts.sampleSeconds));
+      const n: NoteCtx = {
+        pitch: note.pitch,
+        start: Math.max(0, note.t * beat + soundDelay + tt),
+        dur,
+        cents: (note.tune ?? NOTE_DEFAULT.tune) + soundCents + tc,
+        gain: (note.vel ?? NOTE_DEFAULT.vel) * tg,
+        adScale: dur !== undefined && longestD > 0 ? dur / longestD : 1,
+        bus,
+      };
+      for (const layer of ins.layers) voices.push(voiceOf(layer, n, random, parts.sampleSeconds));
     }
   }
 

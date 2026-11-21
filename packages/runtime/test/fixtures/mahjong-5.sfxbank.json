@@ -1,0 +1,91 @@
+{
+  "format": "sfx-bank/1",
+  "master": { "compressor": { "threshold": -10, "ratio": 4, "attack": 0.002, "release": 0.12 } },
+  "reverb": { "room": { "seconds": 0.7, "decay": 3.2, "wet": 0.16 } },
+  "instruments": {
+    "clack": {
+      "layers": [
+        { "noise": "white", "filter": { "type": "bandpass", "freq": 3400, "q": 1.4 }, "gain": 0.55, "env": { "a": 0.001, "d": 0.035 } },
+        { "noise": "white", "filter": { "type": "bandpass", "freq": 7800, "q": 2.5 }, "gain": 0.12, "env": { "a": 0.001, "d": 0.012 } },
+        { "osc": "sine", "freq": 1180, "gain": 0.22, "env": { "d": 0.055 } },
+        { "osc": "sine", "freq": 2730, "gain": 0.1, "env": { "d": 0.028 } },
+        { "osc": "sine", "freq": 190, "gain": 0.5, "env": { "d": 0.09 }, "pitchEnv": { "toHz": 95, "time": "decay" } }
+      ]
+    },
+    "bell": {
+      "layers": [
+        { "osc": "sine", "ratio": 1, "env": { "a": 0.004, "d": 1 } },
+        { "osc": "sine", "ratio": 2.76, "gain": 0.25, "env": { "d": 0.4 } },
+        { "osc": "sine", "ratio": 5.4, "gain": 0.08, "env": { "a": 0.001, "d": 0.15 } }
+      ]
+    },
+    "stick": {
+      "layers": [
+        { "noise": "white", "filter": { "type": "bandpass", "freq": 5200, "q": 3 }, "gain": 0.35, "env": { "a": 0.001, "d": 0.03 } },
+        { "osc": "sine", "freq": 2350, "gain": 0.12, "env": { "d": 0.05 } }
+      ]
+    },
+    "rumble": {
+      "layers": [{ "noise": "white", "filter": { "type": "bandpass", "freq": 420, "q": 0.6 }, "gain": 0.14, "env": { "a": 0.25, "d": 0.32 } }]
+    },
+    "thud": {
+      "layers": [{ "osc": "sine", "freq": 120, "gain": 0.6, "env": { "d": 0.2 }, "pitchEnv": { "toHz": 55, "time": "decay" } }]
+    },
+    "knock": {
+      "layers": [{ "noise": "white", "filter": { "type": "bandpass", "freq": 900, "q": 0.8 }, "gain": 0.18, "env": { "a": 0.001, "d": 0.06 } }]
+    }
+  },
+  "sounds": {
+    "discard": {
+      "tracks": [{ "id": "t1", "instrument": "clack", "send": { "room": 1 }, "notes": [{ "id": "n1", "t": 0 }] }],
+      "variation": { "tune": 68 }
+    },
+    "kan": {
+      "gain": 1.05,
+      "tracks": [
+        {
+          "id": "t1", "instrument": "clack", "send": { "room": 1 }, "jitter": { "tune": 34 },
+          "notes": [
+            { "id": "n1", "t": 0, "tune": -144, "vel": 0.75 },
+            { "id": "n2", "t": 0.055, "tune": -89, "vel": 0.83 },
+            { "id": "n3", "t": 0.11, "tune": -35, "vel": 0.91 },
+            { "id": "n4", "t": 0.165, "tune": 17, "vel": 0.99 }
+          ]
+        }
+      ]
+    },
+    "win": {
+      "tracks": [
+        {
+          "id": "t1", "instrument": "bell", "send": { "room": 1.4 },
+          "notes": [
+            { "id": "n1", "t": 0, "pitch": "C6", "vel": 0.2, "dur": 1.5 },
+            { "id": "n2", "t": 0.085, "pitch": "E6", "vel": 0.18, "dur": 1.5 },
+            { "id": "n3", "t": 0.17, "pitch": "G6", "vel": 0.16, "dur": 1.5 },
+            { "id": "n4", "t": 0.255, "pitch": "C7", "vel": 0.14, "dur": 1.5 }
+          ]
+        }
+      ]
+    },
+    "riichi": {
+      "tracks": [
+        { "id": "t1", "instrument": "stick", "send": { "room": 1 }, "notes": [{ "id": "n1", "t": 0 }] },
+        {
+          "id": "t2", "instrument": "bell", "send": { "room": 1 },
+          "notes": [
+            { "id": "n2", "t": 0.06, "pitch": "G6", "vel": 0.16, "dur": 0.9 },
+            { "id": "n3", "t": 0.14, "pitch": "C7", "vel": 0.12, "dur": 1 }
+          ]
+        }
+      ]
+    },
+    "rise": {
+      "gain": 0.9,
+      "tracks": [
+        { "id": "t1", "instrument": "rumble", "send": { "room": 0.8 }, "notes": [{ "id": "n1", "t": 0 }] },
+        { "id": "t2", "instrument": "thud", "send": { "room": 0.8 }, "notes": [{ "id": "n2", "t": 0.3 }] },
+        { "id": "t3", "instrument": "knock", "send": { "room": 0.8 }, "notes": [{ "id": "n3", "t": 0.3 }] }
+      ]
+    }
+  }
+}

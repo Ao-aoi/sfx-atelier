@@ -148,3 +148,25 @@ describe("validateScore", () => {
     expect(validateScore({ ...score, instruments: {} }).ok).toBe(false);
   });
 });
+
+describe("トラックの jitter と早期反射", () => {
+  it("通す", () => {
+    expect(
+      errorPaths((b) => {
+        b.sounds.kan.tracks[0].jitter = { tune: 34 };
+        b.reverb.room.early = [[0.01, 0.5], [0.02, -0.3]];
+      }),
+    ).toEqual([]);
+  });
+
+  it("早期反射：時刻は 0 以上 seconds 未満、強さは -1〜1、形は [時刻, 強さ]、32 個まで", () => {
+    expect(errorPaths((b) => (b.reverb.room.early = [[0.7, 0.5]]))).toEqual(["reverb.room.early[0]"]);
+    expect(errorPaths((b) => (b.reverb.room.early = [[0.1, 1.5]]))).toEqual(["reverb.room.early[0]"]);
+    expect(errorPaths((b) => (b.reverb.room.early = [[0.1]]))).toEqual(["reverb.room.early[0]"]);
+    expect(errorPaths((b) => (b.reverb.room.early = Array.from({ length: 33 }, () => [0.1, 0.1])))).toEqual(["reverb.room.early"]);
+  });
+
+  it("トラックの jitter に知らないキー", () => {
+    expect(errorPaths((b) => (b.sounds.kan.tracks[0].jitter = { pitch: 1 }))).toEqual(["sounds.kan.tracks[0].jitter.pitch"]);
+  });
+});

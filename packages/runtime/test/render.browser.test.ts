@@ -31,7 +31,7 @@ describe("提案書 4.1 の 3 音を描画する", () => {
   for (const [name, minSec, maxSec] of [
     ["discard", 0.7, 1.0],
     ["kan", 0.9, 1.1],
-    ["win", 1.9, 2.1],
+    ["win", 2.4, 2.6],
   ] as const) {
     it(`${name}：長さ・音が出ている・NaN が無い・割れていない`, async () => {
       const buf = await renderOffline(bank.sounds[name]!, parts, { seed: 1, sampleRate: RATE });
@@ -60,6 +60,21 @@ describe("提案書 4.1 の 3 音を描画する", () => {
     };
     expect(maxDiff(a, b)).toBeLessThan(1e-6);
     expect(maxDiff(a, c)).toBeGreaterThan(1e-3);
+  });
+});
+
+describe("早期反射", () => {
+  it("インパルス応答の指定した時刻に、指定した強さが足される", async () => {
+    const { makeImpulse } = await import("../src/render");
+    const ctx = new OfflineAudioContext(2, RATE, RATE);
+    const zero = () => 0.5; // 雑音は 0（0.5 × 2 - 1）
+    const ir = makeImpulse(ctx, { seconds: 0.2, decay: 3, early: [[0.01, 0.8], [0.0235, -0.4]] }, zero);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = ir.getChannelData(ch);
+      expect(d[480]).toBeCloseTo(0.8, 6);
+      expect(d[1128]).toBeCloseTo(-0.4, 6);
+      expect(d[481]).toBe(0);
+    }
   });
 });
 
