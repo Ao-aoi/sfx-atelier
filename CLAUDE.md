@@ -14,7 +14,8 @@ packages/
   format/      sfx-bank / sfx-score の型・検証・正規化・版の移行。エディタとツールだけが使う
   runtime/     再生だけ（npm 名 @sfx-atelier/runtime）。依存なし。format からは型と既定値（defaults.ts）だけ import する
   analysis/    分析（FFT・特徴量・効果音向けの指標）。エディタとツールだけが使い、ランタイムには入れない
-  (fit/ midi/ physics/  計画の M4.5 以降で足す)
+  physics/     物理エンジン（2.5D の剛体・接触の出来事）と部屋の反響の簡易モデル。エディタとツールだけが使う
+  (fit/ midi/  計画の M4.5 以降で足す)
 web/           エディタ（M3 で足す）
 analysis-demo/ 音響分析デモ（素の JavaScript。M4 で packages/analysis を使う側に置き換える）
 recordings/    録音の wav。リポジトリには置くが公開しない
