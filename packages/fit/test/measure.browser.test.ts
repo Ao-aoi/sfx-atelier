@@ -5,12 +5,11 @@ import { describe, expect, it } from "vitest";
 import { distance, toMono } from "@sfx-atelier/analysis";
 import { shrinkScore } from "@sfx-atelier/format";
 import type { Bank, Score, Sound } from "@sfx-atelier/format/types";
-import mahjong5 from "../../runtime/test/fixtures/mahjong-5.sfxbank.json";
-import sticks from "./fixtures/sticks.sfxscore.json";
+import mahjong from "../../../bank/mahjong.sfxbank.json";
 import { fit } from "../src/fit";
 import { gzipBytes, RATE, renderScore } from "./browser";
 
-const bank = mahjong5 as Bank;
+const bank = mahjong as Bank;
 
 /** バンクの 1 音 → 残響を外した単体の score（使っている楽器だけ） */
 function dry(sound: Sound, instruments: Bank["instruments"]): Score {
@@ -27,7 +26,7 @@ const voices = (s: Score) => s.tracks.reduce((n, t) => n + t.notes.length * (s.i
 
 const cases: [string, Score][] = [
   ["discard", dry(bank.sounds.discard!, bank.instruments)],
-  ["sticks", sticks as Score],
+  ["sticks", dry(bank.sounds.sticks!, bank.instruments)],
   ["win", dry(bank.sounds.win!, bank.instruments)],
 ];
 
