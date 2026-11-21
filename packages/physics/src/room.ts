@@ -4,9 +4,8 @@
 // - 距離：音量は距離に反比例、遅れは距離 ÷ 音速、左右の向きは聞く人の正面からの角度
 // 結果はランタイムの reverb（seconds・decay・wet・early）と、トラックの gain・pan・遅れに写す。
 import type { Reverb } from "@sfx-atelier/format/types";
+import type { Vec3 } from "./engine";
 import { rad, sincos } from "./trig";
-
-export type Vec3 = [number, number, number];
 
 /** 音速（m/s、20℃） */
 export const SPEED_OF_SOUND = 343;
