@@ -35,7 +35,7 @@ scripts/       Pages 用のビルドと CI の検査
 ## 開発
 
 - Node 20.12 以上（CI は `.nvmrc` の 22）、npm workspaces。ルートで `npm install`
-- テスト：`npm test`。型チェック：`npm run typecheck`。容量：`npm run size`。公開物：`npm run build && npm run check:dist`
+- テスト：`npm test`（runtime の描画テストは Playwright の Chromium で動く。初回は `npx playwright install chromium`）。型チェック：`npm run typecheck`。容量：`npm run size`。公開物：`npm run build && npm run check:dist`
 - TypeScript 7、Vitest 5、Vite 8（mahjong-sensei と同じ版）
 - **計算にはユニットテストを書く。期待値は手計算・物理の式・既知の信号など独立した根拠から書き、実装の出力をそのまま写さない**（例：`tune: 1200` で周波数 2 倍、`bpm: 120` で 1 拍 0.5 秒、440Hz の正弦波の重心は 440Hz 付近）
 - Web Audio の描画は Node とブラウザで差が出る。完全一致を求めるのは純粋な計算（compile）だけにし、描画の検査は許容差つきで書く

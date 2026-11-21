@@ -116,3 +116,24 @@ describe("score", () => {
     expect(stripIds(normalizeScore(s))).toEqual(stripIds(n));
   });
 });
+
+describe("録音の層", () => {
+  it("エンベロープの既定は「最後まで鳴らす」（a 0・d 0・s 1・r 5ms・lin）で、縮小すると消える", () => {
+    const b: Bank = {
+      format: "sfx-bank/1",
+      samples: { drop: { url: "drop.wav" } },
+      instruments: { drop: { layers: [{ sample: "drop" }] } },
+      sounds: {},
+    };
+    const n = normalizeBank(b);
+    expect(n.instruments!.drop!.layers[0]).toEqual({
+      sample: "drop",
+      ratio: 1,
+      gain: 1,
+      pan: 0,
+      env: { a: 0, d: 0, s: 1, r: 0.005, curve: "lin" },
+      jitter: { tune: 0, gain: 0, time: 0 },
+    });
+    expect(shrinkBank(n).instruments!.drop!.layers[0]).toEqual({ sample: "drop" });
+  });
+});
