@@ -23,6 +23,8 @@ jobs:
         run: npm test
       - name: ランタイムの容量（gzip 後 10KB 以下）
         run: npm run size
+      - name: ランタイムの npm 公開用の形（型定義だけで使える・余計なファイルが無い）
+        run: npm run pack:runtime && npm run check:pack
       - name: Pages の出力を作る
         run: npm run build
       - name: 公開対象に recordings/ と .wav が無い
