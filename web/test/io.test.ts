@@ -54,3 +54,23 @@ describe("バンクに戻す", () => {
     expect(r.kind).toBe("bank");
   });
 });
+
+describe("MIDI", () => {
+  it("MIDI で書いて読み直すと音符が戻る。MIDI でないバイト列は MIDI と見なさない", async () => {
+    const { isMidi, midiBytes, parseMidi } = await import("../src/model/io");
+    const r = parseJson(
+      '{"format":"sfx-score/1","time":{"unit":"beat","bpm":120},"instruments":{"ピアノ":{"layers":[{"osc":"triangle","ratio":1}]}},"tracks":[{"instrument":"ピアノ","notes":[{"t":0,"dur":1,"pitch":"C4"},{"t":1,"dur":0.5,"pitch":"E4","vel":0.504}]}]}',
+    );
+    if (r.kind !== "score") throw new Error("読めない");
+    const { bytes } = midiBytes(r.score);
+    expect(isMidi(bytes)).toBe(true);
+    expect(isMidi(new TextEncoder().encode("{}"))).toBe(false);
+    const back = parseMidi(bytes);
+    if (back.kind !== "score") throw new Error(back.errors.join());
+    expect(back.score.tracks[0]!.notes.map((n) => [n.t, n.dur, n.pitch, n.vel])).toEqual([
+      [0, 1, "C4", 1],
+      [1, 0.5, "E4", 0.504],
+    ]);
+    expect(parseMidi(new Uint8Array([0x4d, 0x54, 0x68, 0x64, 0, 0])).kind).toBe("error");
+  });
+});
