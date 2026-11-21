@@ -137,16 +137,22 @@ function shrinkMaster(m: Master | undefined): Master | undefined {
   ) as Master | undefined;
 }
 
-function shrinkSound(s: Sound): Sound {
+/** 縮小の選び方。keepIds：トラック・音符の id を残す（保存して版をまたいで同じ音符を指すため。ゲームに配る形では落とす） */
+export interface ShrinkOptions {
+  keepIds?: boolean;
+}
+
+function shrinkSound(s: Sound, opts: ShrinkOptions = {}): Sound {
   const tracks = s.tracks.map((t) => {
-    const { id: _id, ...rest } = t;
+    const { id, ...rest } = t;
     return clean({
+      id: opts.keepIds ? id : undefined,
       ...drop(rest, TRACK_DEFAULT),
       send: t.send && orNone(drop(t.send, {})),
       jitter: t.jitter && orNone(drop(t.jitter, JITTER_DEFAULT)),
       notes: t.notes.map((n) => {
-        const { id: _nid, ...nr } = n;
-        return drop(nr, NOTE_DEFAULT);
+        const { id: nid, ...nr } = n;
+        return opts.keepIds && nid !== undefined ? { id: nid, ...drop(nr, NOTE_DEFAULT) } : drop(nr, NOTE_DEFAULT);
       }),
     });
   });
@@ -169,11 +175,11 @@ function shrinkShared(x: Bank | Score): Obj {
   });
 }
 
-export function shrinkBank(b: Bank): Bank {
-  return { format: b.format, ...shrinkShared(b), sounds: mapValues(b.sounds, shrinkSound) } as Bank;
+export function shrinkBank(b: Bank, opts: ShrinkOptions = {}): Bank {
+  return { format: b.format, ...shrinkShared(b), sounds: mapValues(b.sounds, (s) => shrinkSound(s, opts)) } as Bank;
 }
 
-export function shrinkScore(s: Score): Score {
+export function shrinkScore(s: Score, opts: ShrinkOptions = {}): Score {
   const { format, master: _m, reverb: _r, instruments: _i, samples: _s, ...sound } = s;
-  return { format, ...shrinkShared(s), ...shrinkSound(sound) } as Score;
+  return { format, ...shrinkShared(s), ...shrinkSound(sound, opts) } as Score;
 }

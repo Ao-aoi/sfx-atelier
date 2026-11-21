@@ -137,3 +137,16 @@ describe("録音の層", () => {
     expect(shrinkBank(n).instruments!.drop!.layers[0]).toEqual({ sample: "drop" });
   });
 });
+
+describe("縮小の keepIds", () => {
+  it("トラック・音符の id を残し、既定値は落とす（id は先頭に）", () => {
+    const s = normalizeScore({
+      format: "sfx-score/1",
+      instruments: { a: { layers: [{ osc: "sine", ratio: 1 }] } },
+      tracks: [{ instrument: "a", notes: [{ t: 0 }, { id: "x", t: 1, vel: 1 }] }],
+    });
+    expect(shrinkScore(s, { keepIds: true }).tracks).toEqual([{ id: "t1", instrument: "a", notes: [{ id: "n1", t: 0 }, { id: "x", t: 1 }] }]);
+    expect(Object.keys(shrinkScore(s, { keepIds: true }).tracks[0]!)[0]).toBe("id");
+    expect(shrinkScore(s).tracks).toEqual([{ instrument: "a", notes: [{ t: 0 }, { t: 1 }] }]);
+  });
+});

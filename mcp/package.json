@@ -1,0 +1,22 @@
+{
+  "name": "@sfx-atelier/mcp",
+  "version": "0.0.0",
+  "private": true,
+  "description": "リモート MCP サーバ（Cloudflare Workers）。Claude が作品を読み、変更案を保存する入口",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cloudflare/workers-oauth-provider": "^1.2.4",
+    "@sfx-atelier/format": "*",
+    "@sfx-atelier/store": "*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260702.1",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  }
+}

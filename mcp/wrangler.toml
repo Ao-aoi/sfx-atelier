@@ -1,0 +1,25 @@
+# リモート MCP サーバ。デプロイ：npx wrangler deploy -c mcp/wrangler.toml（Workers Builds ならこれをデプロイコマンドにする）
+# 設定の手順（KV・Access・claude.ai への接続）は docs/setup-mcp.md
+name = "sfx-atelier-mcp"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+# CIMD（クライアントの説明書 URL）を取りに行くときに、内部の宛先へ向かわないようにする
+compatibility_flags = ["global_fetch_strictly_public"]
+# ACCESS_TEAM_DOMAIN / ACCESS_AUD はダッシュボード（Settings → Variables and Secrets）で入れる。デプロイで消さない
+keep_vars = true
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sfx-atelier"
+# 本番の D1 の database_id（秘密情報ではない。docs/setup-cloudflare.md で作ったもの）
+database_id = "00000000-0000-0000-0000-000000000000"
+
+[[r2_buckets]]
+binding = "RECORDINGS"
+bucket_name = "sfx-atelier-recordings"
+
+# OAuth のトークン置き場（KV: sfx-atelier-oauth。秘密情報ではない）
+[[kv_namespaces]]
+binding = "OAUTH_KV"
+id = "00000000000000000000000000000000"

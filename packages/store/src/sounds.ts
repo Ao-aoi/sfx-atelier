@@ -55,7 +55,7 @@ export interface SoundVersion {
 const enc = new TextEncoder();
 const bytes = (s: string) => enc.encode(s).length;
 
-/** score かバンクを検証して、縮めた JSON にする */
+/** score かバンクを検証して、縮めた JSON にする。トラック・音符の id は残す（版をまたいで同じ音符を指せるように） */
 export function checkBody(body: unknown): { kind: SoundKind; json: string } {
   const format = (body as { format?: unknown } | null)?.format;
   let json: string;
@@ -63,12 +63,12 @@ export function checkBody(body: unknown): { kind: SoundKind; json: string } {
   if (format === SCORE_FORMAT) {
     const r = validateScore(body);
     if (!r.ok) throw new HttpError(400, `score が正しくありません：${errorsText(r.errors)}`, "invalid_body");
-    json = JSON.stringify(shrinkScore(normalizeScore(r.value)));
+    json = JSON.stringify(shrinkScore(normalizeScore(r.value), { keepIds: true }));
     kind = "score";
   } else if (format === BANK_FORMAT) {
     const r = validateBank(body);
     if (!r.ok) throw new HttpError(400, `バンクが正しくありません：${errorsText(r.errors)}`, "invalid_body");
-    json = JSON.stringify(shrinkBank(normalizeBank(r.value)));
+    json = JSON.stringify(shrinkBank(normalizeBank(r.value), { keepIds: true }));
     kind = "bank";
   } else {
     throw new HttpError(400, `format が ${SCORE_FORMAT} でも ${BANK_FORMAT} でもありません`, "invalid_body");
