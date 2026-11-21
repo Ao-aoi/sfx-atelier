@@ -11,10 +11,12 @@
   },
   "scripts": {
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "record": "vitest run -c vitest.record.config.ts --silent=false"
   },
   "dependencies": {
-    "@sfx-atelier/format": "*"
+    "@sfx-atelier/format": "*",
+    "@sfx-atelier/analysis": "*"
   },
   "devDependencies": {
     "typescript": "^7.0.2",
