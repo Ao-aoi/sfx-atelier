@@ -11,6 +11,8 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true,
     minify: true,
+    // lib モードの ES 出力は既定で空白を残すので、出力側でも縮める（ゲームに配るのはこのファイル）
+    rolldownOptions: { output: { minify: true } },
     sourcemap: false,
   },
 });
