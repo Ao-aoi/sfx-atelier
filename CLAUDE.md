@@ -19,6 +19,7 @@ packages/
   fit/         波形 → 層（減衰する正弦波＋帯域雑音）への変換（M4.5）。エディタとツールだけが使う
   midi/        標準 MIDI ファイルの読み書きと sfx-score との変換（M6）。エディタとツールだけが使う
   store/       作品の保存（D1 / R2 / Access の認証 / 保存 API）。functions と mcp から使う
+mcp/           リモート MCP サーバ（Cloudflare Workers）。手順は docs/setup-mcp.md
 functions/     Cloudflare Pages Functions（`/api/*` を packages/store に渡すだけ）
 db/migrations/ D1 のスキーマ（SQL）。変更は必ず migration で行う。手順は docs/setup-cloudflare.md
 web/           エディタ（Vite、フレームワークなし）。model/ は純粋な編集の操作・履歴・時間軸・読み書き（Node のテスト）、ui/ は画面（ブラウザのテスト）。Pages では /editor/
