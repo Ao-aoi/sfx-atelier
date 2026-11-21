@@ -1,0 +1,16 @@
+{
+  "name": "@sfx-atelier/functions",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Cloudflare Pages Functions（/api/*）。処理の中身は packages/store",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sfx-atelier/store": "*"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}

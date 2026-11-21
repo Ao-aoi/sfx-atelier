@@ -1,0 +1,24 @@
+{
+  "name": "@sfx-atelier/store",
+  "version": "0.0.0",
+  "private": true,
+  "description": "作品の保存（D1 / R2 / 認証 / 保存 API）。Pages Functions と MCP から使う",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sfx-atelier/format": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  }
+}

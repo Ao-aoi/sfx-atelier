@@ -18,6 +18,9 @@ packages/
   physics/     物理エンジン（2.5D の剛体・接触の出来事）と部屋の反響の簡易モデル。エディタとツールだけが使う
   fit/         波形 → 層（減衰する正弦波＋帯域雑音）への変換（M4.5）。エディタとツールだけが使う
   midi/        標準 MIDI ファイルの読み書きと sfx-score との変換（M6）。エディタとツールだけが使う
+  store/       作品の保存（D1 / R2 / Access の認証 / 保存 API）。functions と mcp から使う
+functions/     Cloudflare Pages Functions（`/api/*` を packages/store に渡すだけ）
+db/migrations/ D1 のスキーマ（SQL）。変更は必ず migration で行う。手順は docs/setup-cloudflare.md
 web/           エディタ（Vite、フレームワークなし）。model/ は純粋な編集の操作・履歴・時間軸・読み書き（Node のテスト）、ui/ は画面（ブラウザのテスト）。Pages では /editor/
 analysis-demo/ 音響分析デモ（JavaScript。計算は packages/analysis を使い、Vite でビルドする）
 bank/          ゲームに配るバンク（mahjong.sfxbank.json）
@@ -30,6 +33,7 @@ scripts/       Pages 用のビルドと CI の検査
 - ビルド `npm run build`（web・compare・analysis-demo を Vite でビルドしてから集める）、出力 `dist`。公開するものは `scripts/build-site.mjs` の `PUBLISH` に書いたものだけ
 - `recordings/` と `.wav` は `dist` に入れない。CI の `npm run check:dist` で確かめる。ゲームに配る wav はゲーム側のリポジトリに書き出す
 - 配布は JSON（合成）と wav（`sample` 層）の両方に対応する
+- 保存（M7）：全テーブルに `user_id` を持たせる（mahjong-sensei と同じ規則）。秘密情報はコードに書かず、Workers / Pages の secret に入れる
 
 ## ランタイムの決まり
 
