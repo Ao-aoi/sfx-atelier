@@ -3,10 +3,11 @@
   "private": true,
   "description": "web ゲーム向けの軽量な効果音・ジングル作成ツール",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "web"
   ],
   "scripts": {
-    "build": "npm run build -w @sfx-atelier/compare && node scripts/build-site.mjs",
+    "build": "npm run build -w @sfx-atelier/web && npm run build -w @sfx-atelier/compare && node scripts/build-site.mjs",
     "check:dist": "node scripts/check-dist.mjs",
     "size": "npm run build -w @sfx-atelier/runtime && node scripts/check-size.mjs",
     "test": "npm test --workspaces --if-present",
