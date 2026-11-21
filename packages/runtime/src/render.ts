@@ -14,6 +14,8 @@ export interface Shared {
   master: GainNode;
   noise: Partial<Record<NoiseType, AudioBuffer>>;
   reverbs: Record<string, GainNode>;
+  /** 作った残響の設定（JSON）。同じ名前で設定が変わったら作り直す */
+  reverbSpecs: Record<string, string>;
   samples: Record<string, AudioBuffer>;
   random: Random;
 }
@@ -75,20 +77,30 @@ export function createShared(ctx: BaseAudioContext, setup: SharedSetup, random: 
     master.connect(comp).connect(out);
   } else master.connect(out);
 
-  const shared: Shared = { ctx, input: master, master, noise: {}, reverbs: {}, samples: {}, random };
+  const shared: Shared = { ctx, input: master, master, noise: {}, reverbs: {}, reverbSpecs: {}, samples: {}, random };
   shared.noise.white = makeNoise(ctx, "white", random);
-  for (const name of Object.keys(setup.reverb ?? {}).sort()) {
-    const r = setup.reverb![name]!;
+  ensureReverbs(shared, setup.reverb);
+  return shared;
+}
+
+/** 残響を用意する（名前の順に作る）。同じ名前で設定が変わっていたら作り直す（エディタで残響を変えたとき） */
+export function ensureReverbs(shared: Shared, reverb: Record<string, Reverb> | undefined) {
+  const { ctx } = shared;
+  for (const name of Object.keys(reverb ?? {}).sort()) {
+    const r = reverb![name]!;
+    const spec = JSON.stringify(r);
+    if (shared.reverbSpecs[name] === spec) continue;
+    shared.reverbs[name]?.disconnect();
     const conv = ctx.createConvolver();
-    conv.buffer = makeImpulse(ctx, r, random);
+    conv.buffer = makeImpulse(ctx, r, shared.random);
     const wet = ctx.createGain();
     wet.gain.value = r.wet ?? REVERB_DEFAULT.wet;
     // 送り（GainNode）→ 残響 → wet → マスター
     const send = ctx.createGain();
-    send.connect(conv).connect(wet).connect(master);
+    send.connect(conv).connect(wet).connect(shared.input);
     shared.reverbs[name] = send;
+    shared.reverbSpecs[name] = spec;
   }
-  return shared;
 }
 
 function apply(param: AudioParam, auto: Automation, when: number) {
