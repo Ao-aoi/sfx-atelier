@@ -11,7 +11,8 @@ const out = join(root, "dist");
 // 公開するもの：[リポジトリ直下からの元の場所, dist の中の場所]
 const PUBLISH = [
   ["index.html", "index.html"],
-  ["analysis-demo", "analysis-demo"],
+  // 音響分析デモ（先に npm run build -w @sfx-atelier/analysis-demo で作る）
+  ["analysis-demo/dist", "analysis-demo"],
   // A/B のページ（先に npm run build -w @sfx-atelier/compare で作る）
   ["packages/compare/dist", "ab"],
 ];

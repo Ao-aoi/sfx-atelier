@@ -1,0 +1,17 @@
+{
+  "name": "@sfx-atelier/analysis-demo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "音響分析デモ（packages/analysis を使う）。ルートの npm run build が dist/analysis-demo に写す",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite --host"
+  },
+  "dependencies": {
+    "@sfx-atelier/analysis": "*"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  }
+}
