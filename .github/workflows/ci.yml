@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: 型検査
+        run: npm run typecheck
+      - name: テスト
+        run: npm test
+      - name: ランタイムの容量（gzip 後 10KB 以下）
+        run: npm run size
+      - name: Pages の出力を作る
+        run: npm run build
+      - name: 公開対象に recordings/ と .wav が無い
+        run: npm run check:dist

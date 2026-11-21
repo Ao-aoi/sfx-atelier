@@ -1,0 +1,19 @@
+# 依存・ビルド成果物
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+
+# OS / エディタ
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 秘密情報
+.env
+.env.*
+!.env.example
+
+# wrangler のローカル状態
+.wrangler/
